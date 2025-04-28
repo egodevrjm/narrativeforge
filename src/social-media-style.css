@@ -1,0 +1,86 @@
+/* Notification paragraph spacing */
+.notification-paragraph {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+}
+
+.notification-paragraph:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Add more space between notification lines in the same paragraph */
+.notification-line {
+  margin-bottom: 0.4rem;
+}
+
+.notification-line:last-child {
+  margin-bottom: 0;
+}/* Social Media Notification Styling - Supplementary styles */
+
+/* Notification paragraph spacing */
+.notification-paragraph {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+}
+
+.notification-paragraph:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Add more space between notification lines in the same paragraph */
+.notification-line {
+  margin-bottom: 0.4rem;
+}
+
+.notification-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 480px) {
+  .platform-section {
+    padding: 0.75rem;
+  }
+  
+  .platform-header {
+    margin-bottom: 0.5rem;
+  }
+  
+  .platform-content {
+    gap: 0.5rem;
+  }
+  
+  .notification-line {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .platform-icon {
+    font-size: 1.1rem;
+  }
+  
+  .platform-name {
+    font-size: 0.9rem;
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .platform-section {
+    background-color: rgba(20, 20, 20, 0.7);
+  }
+  
+  .notification-line {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+  
+  .notification-line:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}

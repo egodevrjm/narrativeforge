@@ -1,0 +1,336 @@
+.right-aligned {
+  text-align: right;
+  color: var(--accent-secondary);
+}
+
+.section-title.right-aligned {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-xs);
+  color: var(--accent-secondary);
+}
+
+.section-subtitle.right-aligned {
+  text-align: right;
+  margin-bottom: var(--spacing-xl);
+}
+
+.scenario-selection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+.scenario-selection h2, .section-title {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: var(--accent-secondary);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scenario-selection > p, .section-subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  opacity: 0.8;
+  font-size: 1.1rem;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.scenario-card {
+  background-color: var(--bg-secondary);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 320px;
+  border: 1px solid var(--card-border);
+}
+
+.scenario-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-color);
+}
+
+.scenario-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: var(--accent-secondary);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scenario-card p {
+  flex-grow: 1;
+  color: var(--text-primary);
+  opacity: 0.9;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.scenario-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.select-btn, .create-btn, .step-by-step-btn, .quick-setup-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.select-btn, .scenario-card-btn {
+  background-color: var(--accent-secondary);
+  color: var(--bg-primary);
+  width: 100%;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.select-btn:hover, .scenario-card-btn:hover {
+  background-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.create-btn {
+  background-color: var(--accent-secondary);
+  color: var(--bg-primary);
+  width: 100%;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-btn:hover {
+  background-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.create-options {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.step-by-step-btn, .quick-setup-btn {
+  flex: 1;
+}
+
+.step-by-step-btn {
+  background-color: #f39c12;
+  color: white;
+}
+
+.step-by-step-btn:hover {
+  background-color: #e67e22;
+}
+
+.quick-setup-btn {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.quick-setup-btn:hover {
+  background-color: #8e44ad;
+}
+
+.create-own {
+  background-color: var(--bg-secondary);
+  border: 2px dashed var(--card-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 320px;
+}
+
+.create-own:hover {
+  border-color: var(--accent-secondary);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Overlay when API key is not set */
+.api-key-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: var(--border-radius-md);
+}
+
+.api-key-message {
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--accent-primary);
+}
+
+.api-key-message p {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+/* Additional scenario card styling */
+.scenario-card-header {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+}
+
+.scenario-type-badge {
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  background-color: var(--accent-primary);
+  color: white;
+  font-size: 0.8rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  z-index: 2;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scenario-card-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.scenario-card-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(to top, var(--bg-secondary), transparent);
+  z-index: 1;
+}
+
+.scenario-card-content {
+  padding: var(--spacing-md);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scenario-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+
+.scenario-tag {
+  font-size: 0.8rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+}
+
+.scenario-card-footer {
+  margin-top: auto;
+}
+
+.create-card-icon {
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--accent-secondary);
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(10, 200, 185, 0.1);
+  border-radius: 50%;
+  margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 1200px) {
+  .scenarios-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .section-title.right-aligned {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .scenarios-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .right-aligned {
+    text-align: center;
+  }
+  
+  .section-title.right-aligned {
+    font-size: 2.2rem;
+    text-align: center;
+  }
+  
+  .section-subtitle.right-aligned {
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .scenarios-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .create-options {
+    flex-direction: column;
+  }
+}

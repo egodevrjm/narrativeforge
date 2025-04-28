@@ -1,0 +1,60 @@
+/* Improved Message Formatting CSS - Load this after main CSS */
+
+/* Improve message spacing in container */
+.messages-container {
+  gap: 2rem !important; /* Increased gap between messages */
+}
+
+/* Enhanced paragraph styling for all message types */
+.dialogue-message p, 
+.action-message p, 
+.thought-message p, 
+.social-message p,
+.system-message p {
+  margin-bottom: 1.5rem !important; /* Increased bottom margin */
+  line-height: 1.8 !important; /* Increased line height */
+  font-size: 1.05rem !important; /* Slightly larger text */
+}
+
+/* Social media messages */
+.social-message {
+  padding: 1.5rem !important; /* Increased padding */
+  margin-bottom: 1rem !important; /* Added bottom margin */
+  width: 100% !important; /* Ensure full width */
+}
+
+.social-message p {
+  margin-bottom: 1.5rem !important; /* Increased margin between paragraphs */
+}
+
+/* System message improvement */
+.system-message {
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.8 !important;
+  text-align: left !important; /* Left aligned text */
+  font-style: normal !important; /* Not italic */
+}
+
+/* Day headers */
+.day-header {
+  margin: 1.5rem 0 2rem 0 !important; /* More space after day headers */
+}
+
+/* Message wrapper adjustments */
+.message-wrapper {
+  margin-bottom: 1.5rem !important; /* Space between messages */
+  max-width: 100% !important; /* Full width messages */
+  width: 100% !important;
+}
+
+.message-wrapper.ai {
+  align-self: stretch !important; /* Full width */
+  width: 100% !important;
+}
+
+/* Error messages */
+.error-message {
+  padding: 1.2rem !important;
+  margin-bottom: 1rem !important;
+}

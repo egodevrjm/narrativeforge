@@ -10,10 +10,30 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* Different styling for ElevenLabs warnings */
+.api-key-warning.elevenlabs {
+  background-color: rgba(92, 66, 208, 0.1);
+  border: 1px solid #5c42d0;
+}
+
+/* Different styling for "both" warnings */
+.api-key-warning.both {
+  background-color: rgba(255, 153, 0, 0.1);
+  border: 1px solid #ff9900;
+}
+
 .warning-icon {
   color: var(--accent-primary);
   font-size: 1.5rem;
   margin-right: var(--spacing-md);
+}
+
+.elevenlabs .warning-icon {
+  color: #5c42d0;
+}
+
+.both .warning-icon {
+  color: #ff9900;
 }
 
 .warning-content {
@@ -26,6 +46,14 @@
   color: var(--accent-primary);
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
+}
+
+.elevenlabs .warning-content h3 {
+  color: #5c42d0;
+}
+
+.both .warning-content h3 {
+  color: #ff9900;
 }
 
 .warning-content p {
@@ -52,7 +80,23 @@
   gap: var(--spacing-sm);
 }
 
+.elevenlabs .warning-action-btn {
+  background-color: #5c42d0;
+}
+
+.both .warning-action-btn {
+  background-color: #ff9900;
+}
+
 .warning-action-btn:hover {
   background-color: var(--button-primary-hover);
   transform: translateY(-2px);
+}
+
+.elevenlabs .warning-action-btn:hover {
+  background-color: #4933b3;
+}
+
+.both .warning-action-btn:hover {
+  background-color: #e68a00;
 }

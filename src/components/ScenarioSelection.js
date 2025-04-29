@@ -49,7 +49,7 @@ const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
                   disabled={!isApiKeySet}
                 >
                   {!isApiKeySet ? (
-                    <>Need API Key</>
+                    <>API Keys Required</>
                   ) : (
                     <>Play Now</>
                   )}
@@ -70,7 +70,11 @@ const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
                 onClick={() => setShowCreateOptions(true)}
                 disabled={!isApiKeySet}
               >
-                Create Custom
+                {!isApiKeySet ? (
+                  <>API Keys Required</>
+                ) : (
+                  <>Create Custom</>
+                )}
               </button>
             </div>
           ) : (
@@ -78,6 +82,7 @@ const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
               <button 
                 className="step-by-step-btn"
                 onClick={() => onCreateOwn('step')}
+                disabled={!isApiKeySet}
               >
                 <span>Step-by-Step</span>
                 <span>Guide</span>
@@ -85,6 +90,7 @@ const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
               <button 
                 className="quick-setup-btn"
                 onClick={() => onCreateOwn('quick')}
+                disabled={!isApiKeySet}
               >
                 <span>Quick</span>
                 <span>Setup</span>
@@ -97,7 +103,8 @@ const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
       {!isApiKeySet && (
         <div className="api-key-overlay">
           <div className="api-key-message">
-            <p>Add an API key to begin</p>
+            <p>Gemini and ElevenLabs API keys required</p>
+            <p className="api-key-submessage">Add your API keys in Settings to begin</p>
           </div>
         </div>
       )}

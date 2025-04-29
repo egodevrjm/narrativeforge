@@ -190,7 +190,7 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
     };
 
     // Try to extract relationships
-    const relationshipMatch = setupText.match(/relationship[^:]*:([^\.]+)/i);
+    const relationshipMatch = setupText.match(/relationship[^:]*:([^\.]+(\.|$))/i);
     if (relationshipMatch && relationshipMatch[1]) {
       character.relationships.push({
         name: 'Extracted Character',
@@ -200,7 +200,7 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
     }
 
     // Try to extract other characters
-    const characterMatch = setupText.match(/character[^:]*:([^\.]+)/i);
+    const characterMatch = setupText.match(/character[^:]*:([^\.]+(\.|$))/i);
     if (characterMatch && characterMatch[1]) {
       scenario.otherCharacters.push({
         name: 'Extracted Character',
@@ -209,10 +209,10 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
         relationship: 'Unknown'
       });
     }
-
+    
     // Store the parsed data for try again functionality
     setParsedData({ character, scenario });
-    
+
     onSave(character, scenario);
   };
 

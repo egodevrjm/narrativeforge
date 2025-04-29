@@ -1,12 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ChatInterface.css';
+import VoiceSelector from './VoiceSelector';
 
-const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset }) => {
+const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, isVoiceEnabled, onSaveChat, onReset }) => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [messageType, setMessageType] = useState('dialogue'); // dialogue, action, thought
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  // Voice-related state
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [showVoiceSelector, setShowVoiceSelector] = useState(false);
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+  const [currentlyPlayingMessageIndex, setCurrentlyPlayingMessageIndex] = useState(null);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true); // Default to enabled
+  
+  // Speech-to-text state
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const recordedChunks = useRef([]);
 
   // Initialize with system message
   useEffect(() => {
@@ -59,11 +72,22 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
         "system"
       );
       
-      setMessages(prev => [...prev, {
+      const assistantMessage = {
         role: 'assistant',
         content: response,
         timestamp: new Date().toISOString()
-      }]);
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Generate and play voice if enabled and autoplay is on
+      if (isVoiceEnabled && elevenLabsService && selectedVoice && autoplayEnabled) {
+        try {
+          playMessageAudio(response, messages.length);
+        } catch (voiceError) {
+          console.error('Error generating voice:', voiceError);
+        }
+      }
     } catch (error) {
       console.error('Error getting AI response:', error);
       setMessages(prev => [...prev, {
@@ -94,11 +118,23 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
     try {
       const response = await geminiService.generateResponse(inputValue, messageType);
       
-      setMessages(prev => [...prev, {
+      const assistantMessage = {
         role: 'assistant',
         content: response,
         timestamp: new Date().toISOString()
-      }]);
+      };
+      
+      const newMessages = [...messages, newMessage, assistantMessage];
+      setMessages(newMessages);
+      
+      // Generate and play voice if enabled and autoplay is on
+      if (isVoiceEnabled && elevenLabsService && selectedVoice && autoplayEnabled) {
+        try {
+          playMessageAudio(response, newMessages.length - 1);
+        } catch (voiceError) {
+          console.error('Error generating voice:', voiceError);
+        }
+      }
     } catch (error) {
       console.error('Error getting AI response:', error);
       setMessages(prev => [...prev, {
@@ -118,7 +154,167 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
       handleSendMessage();
     }
   };
+  
+  // Auto-resize textarea based on content
+  const handleTextareaInput = (e) => {
+    setInputValue(e.target.value);
+    
+    // Auto-resize logic
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    const newHeight = Math.max(50, Math.min(150, textarea.scrollHeight));
+    textarea.style.height = `${newHeight}px`;
+  };
 
+  // Load available voices when ElevenLabs service is initialized
+  useEffect(() => {
+    if (elevenLabsService && isVoiceEnabled) {
+      const loadVoices = async () => {
+        try {
+          const voices = await elevenLabsService.getVoices();
+          if (voices.length > 0 && !selectedVoice) {
+            // Default to first voice
+            setSelectedVoice(voices[0]);
+          }
+        } catch (error) {
+          console.error('Error loading voices:', error);
+        }
+      };
+      
+      loadVoices();
+    }
+  }, [elevenLabsService, isVoiceEnabled]);
+  
+  // Load stored settings from localStorage
+  useEffect(() => {
+    // Load autoplay setting
+    const savedAutoplay = localStorage.getItem('voice_autoplay');
+    if (savedAutoplay !== null) {
+      setAutoplayEnabled(savedAutoplay === 'true');
+    }
+  }, []);
+  
+  // Save autoplay setting to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('voice_autoplay', autoplayEnabled.toString());
+  }, [autoplayEnabled]);
+  
+  // Handle microphone access and start recording
+  const startRecording = async () => {
+    try {
+      // Request access to the microphone
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Create a media recorder
+      const recorder = new MediaRecorder(stream);
+      setMediaRecorder(recorder);
+      
+      // Handle data available events
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          recordedChunks.current.push(e.data);
+        }
+      };
+      
+      // Handle recording stop event
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/webm' });
+        recordedChunks.current = [];
+        
+        // Stop all tracks to release the microphone
+        stream.getTracks().forEach(track => track.stop());
+        
+        // Convert speech to text if ElevenLabs is enabled
+        if (elevenLabsService && isVoiceEnabled) {
+          try {
+            setIsLoading(true);
+            const transcribedText = await elevenLabsService.speechToText(audioBlob);
+            
+            if (transcribedText) {
+              setInputValue(transcribedText);
+            } else {
+              console.warn('No text transcribed from audio');
+            }
+          } catch (error) {
+            console.error('Speech-to-text error:', error);
+            // Show error message to user
+            alert('Could not convert speech to text. Please try again or type your message.');
+          } finally {
+            setIsLoading(false);
+          }
+        }
+      };
+      
+      // Start recording
+      recorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      alert('Could not access microphone. Please check your browser permissions.');
+    }
+  };
+  
+  // Stop recording
+  const stopRecording = () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+  
+  // Handle selecting a voice
+  const handleSelectVoice = (voice) => {
+    setSelectedVoice(voice);
+    setShowVoiceSelector(false);
+  };
+  
+  // Add a function to play a specific message
+  const playMessageAudio = async (messageContent, messageIndex) => {
+    if (isPlayingVoice || !elevenLabsService || !selectedVoice || !isVoiceEnabled) return;
+    
+    try {
+      setIsPlayingVoice(true);
+      setCurrentlyPlayingMessageIndex(messageIndex);
+      
+      const audioBlob = await elevenLabsService.textToSpeech(messageContent, selectedVoice.voice_id);
+      
+      // Set up an event listener for when audio ends
+      const handleAudioEnd = () => {
+        setIsPlayingVoice(false);
+        setCurrentlyPlayingMessageIndex(null);
+        if (elevenLabsService.currentAudio) {
+          elevenLabsService.currentAudio.removeEventListener('ended', handleAudioEnd);
+        }
+      };
+      
+      const audio = elevenLabsService.playAudio(audioBlob);
+      audio.addEventListener('ended', handleAudioEnd);
+      
+    } catch (error) {
+      console.error('Error playing message audio:', error);
+      setIsPlayingVoice(false);
+      setCurrentlyPlayingMessageIndex(null);
+    }
+  };
+  
+  // Function to stop all audio playback
+  const stopAllAudio = () => {
+    if (elevenLabsService) {
+      elevenLabsService.stopAudio();
+      setIsPlayingVoice(false);
+      setCurrentlyPlayingMessageIndex(null);
+    }
+  };
+  
+  // Stop any playing audio when component unmounts
+  useEffect(() => {
+    return () => {
+      if (elevenLabsService) {
+        elevenLabsService.stopAudio();
+      }
+    };
+  }, [elevenLabsService]);
+  
   return (
     <div className="chat-interface">
       <div className="chat-header">
@@ -127,6 +323,21 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
           <p className="scenario-title">{scenario?.title || 'Untitled Scenario'}</p>
         </div>
         <div className="chat-controls">
+          {isVoiceEnabled && elevenLabsService && (
+            <button 
+              className={`voice-btn ${isPlayingVoice ? 'voice-playing' : ''}`}
+              onClick={() => setShowVoiceSelector(!showVoiceSelector)}
+              title="Voice Settings"
+              type="button"
+            >
+              {isPlayingVoice ? (
+                <span className="voice-playing-indicator">🔊</span>
+              ) : (
+                <span>🎤</span>
+              )}
+              {selectedVoice ? selectedVoice.name : 'Select Voice'}
+            </button>
+          )}
           <button 
             className="save-btn" 
             onClick={() => typeof onSaveChat === 'function' && onSaveChat(messages)}
@@ -144,11 +355,46 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
         </div>
       </div>
       
+      {showVoiceSelector && elevenLabsService && (
+        <div className="voice-selector-modal">
+          <div className="voice-selector-content">
+            <div className="voice-selector-header">
+              <h3>Voice Settings</h3>
+              <button 
+                className="close-voice-selector" 
+                onClick={() => setShowVoiceSelector(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="voice-settings-controls">
+              <div className="autoplay-toggle">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={autoplayEnabled}
+                    onChange={(e) => setAutoplayEnabled(e.target.checked)}
+                  />
+                  <span>Autoplay voice responses</span>
+                </label>
+              </div>
+            </div>
+            <div className="voice-selector-title">Select Voice</div>
+            <VoiceSelector
+              elevenLabsApiKey={elevenLabsService.apiKey}
+              selectedVoice={selectedVoice}
+              onSelectVoice={handleSelectVoice}
+              isLoading={isPlayingVoice}
+            />
+          </div>
+        </div>
+      )}
+      
       <div className="chat-messages">
         {messages.map((message, index) => (
           <div 
             key={index} 
-            className={`message ${message.role === 'user' ? 'user-message' : message.role === 'assistant' ? 'ai-message' : 'system-message'} ${message.error ? 'error-message' : ''}`}
+            className={`message ${message.role === 'user' ? 'user-message' : message.role === 'assistant' ? 'ai-message' : 'system-message'} ${message.error ? 'error-message' : ''} ${currentlyPlayingMessageIndex === index ? 'currently-playing' : ''}`}
           >
             {message.role === 'user' && message.type && (
               <div className="message-type-tag">
@@ -158,6 +404,19 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
               </div>
             )}
             <div className="message-content">{message.content}</div>
+            
+            {message.role === 'assistant' && isVoiceEnabled && elevenLabsService && selectedVoice && (
+              <div className="message-voice-control">
+                <button 
+                  onClick={() => playMessageAudio(message.content, index)}
+                  disabled={isPlayingVoice}
+                  className="play-message-btn"
+                  title="Play message"
+                >
+                  {currentlyPlayingMessageIndex === index ? '🔊 Playing...' : '🔊 Play'}
+                </button>
+              </div>
+            )}
           </div>
         ))}
         
@@ -199,30 +458,55 @@ const ChatInterface = ({ character, scenario, geminiService, onSaveChat, onReset
           </button>
         </div>
         
-        <div className="input-wrapper">
-          <textarea 
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder={messageType === 'dialogue' ? 'Type your dialogue...' : 
-                        messageType === 'action' ? 'Describe your action...' : 
-                        messageType === 'thought' ? 'Share your thoughts...' :
-                        'Type your message...'}
-            rows={3}
-          />
-          <div className="input-helper">
-            {inputValue.length > 0 ? 'Press Enter to send or click the button' : ''}
-          </div>
-        </div>
+        {isVoiceEnabled && elevenLabsService && isPlayingVoice && (
+          <button 
+            type="button"
+            className="stop-voice-btn"
+            onClick={stopAllAudio}
+            title="Stop Voice"
+          >
+            Stop Voice
+          </button>
+        )}
         
-        <button 
-          type="button"
-          className="send-btn"
-          onClick={handleSendMessage}
-          disabled={isLoading || !inputValue.trim()}
-        >
-          Send
-        </button>
+        <div className="message-input-row">
+          <div className="input-wrapper">
+            <textarea 
+              value={inputValue}
+              onChange={handleTextareaInput}
+              onKeyDown={handleKeyPress}
+              placeholder={messageType === 'dialogue' ? 'Type your dialogue...' : 
+                          messageType === 'action' ? 'Describe your action...' : 
+                          messageType === 'thought' ? 'Share your thoughts...' :
+                          'Type your message...'}
+              rows={1}
+              style={{ minHeight: '50px' }}
+            />
+            {isVoiceEnabled && elevenLabsService && (
+              <button
+                type="button"
+                className={`voice-input-btn ${isRecording ? 'recording' : ''}`}
+                onClick={isRecording ? stopRecording : startRecording}
+                title={isRecording ? "Stop recording" : "Record voice input"}
+              >
+                {isRecording ? '⏹️' : '🎙️'}
+              </button>
+            )}
+            {inputValue.length > 0 && (
+              <div className="input-helper">
+                Press Enter to send
+              </div>
+            )}
+          </div>
+          
+          <button 
+            type="button"
+            className="send-btn"
+            onClick={handleSendMessage}
+            disabled={isLoading || !inputValue.trim()}
+            aria-label="Send message"
+          />
+        </div>
       </div>
     </div>
   );

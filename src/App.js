@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import QuickSetup from './components/SetupMode/QuickSetup';
+import QuickSetup from './components/SetupMode/QuickSetup.js';
 import './components/SetupMode/QuickSetup.css';
-import SetupWizard from './components/SetupWizard/SetupWizard';
-import ChatInterface from './components/ChatInterface';
-import ScenarioSelection from './components/ScenarioSelection';
-import Settings from './components/Settings';
-import ApiKeyWarning from './components/ApiKeyWarning';
-import GeminiService from './services/geminiService';
-import { defaultCharacter, defaultScenario } from './templates/defaultTemplate';
-import { preDesignedScenarios } from './templates/preDesignedScenarios';
-import ChatBackground from './components/ChatBackground';
+import SetupWizard from './components/SetupWizard/SetupWizard.js';
+import ChatInterface from './components/ChatInterface.js';
+import ScenarioSelection from './components/ScenarioSelection.js';
+import Settings from './components/Settings.js';
+import ApiKeyWarning from './components/ApiKeyWarning.js';
+import GeminiService from './services/geminiService.js';
+import ElevenLabsService from './services/elevenLabsService.js'; // Import ElevenLabs service
+import { defaultCharacter, defaultScenario } from './templates/defaultTemplate.js';
+import { preDesignedScenarios } from './templates/preDesignedScenarios.js';
+import ChatBackground from './components/ChatBackground.js';
 import './layout.css';
 import './theme.css';
 import './App.css';
-import './improved-message-formatting.css'; // Import improved message formatting
-import './social-media-style.css'; // Import social media styling
-import './chat-auto-detect.css'; // Import auto-detect styling
+import './improved-message-formatting.css';
+import './social-media-style.css';
+import './chat-auto-detect.css';
 
 function App() {
   const [currentStep, setCurrentStep] = useState('welcome'); // welcome, character, scenario, chat, quickSetup
@@ -27,6 +28,13 @@ function App() {
   const [isTestingApi, setIsTestingApi] = useState(false);
   const [apiTestResult, setApiTestResult] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  
+  // ElevenLabs state
+  const [elevenLabsApiKey, setElevenLabsApiKey] = useState('');
+  const [elevenLabsService, setElevenLabsService] = useState(null);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
+  const [isTestingVoiceApi, setIsTestingVoiceApi] = useState(false);
+  const [voiceApiTestResult, setVoiceApiTestResult] = useState(null);
 
   // Initialize Gemini service when API key is set
   useEffect(() => {
@@ -35,6 +43,22 @@ function App() {
       setGeminiService(service);
     }
   }, [apiKey, isApiKeySet]);
+  
+  // Initialize ElevenLabs service when API key is set
+  useEffect(() => {
+    if (elevenLabsApiKey) {
+      try {
+        const service = new ElevenLabsService(elevenLabsApiKey);
+        setElevenLabsService(service);
+        console.log('ElevenLabs service initialized');
+      } catch (error) {
+        console.error('Failed to initialize ElevenLabs service:', error);
+      }
+    } else {
+      // Clear the service if no API key is set
+      setElevenLabsService(null);
+    }
+  }, [elevenLabsApiKey]);
 
   // Initialize service for roleplay when character and scenario are ready
   useEffect(() => {
@@ -43,7 +67,7 @@ function App() {
     }
   }, [geminiService, character, scenario, currentStep]);
 
-  // Test API key functionality
+  // Test Gemini API key functionality
   const testApiKey = async () => {
     if (!apiKey) {
       setApiTestResult({
@@ -88,6 +112,56 @@ function App() {
     }
   };
 
+  // Test ElevenLabs API key functionality
+  const testVoiceApiKey = async (apiKeyToTest) => {
+    // Use the provided key or fall back to the stored key
+    const keyToTest = apiKeyToTest || elevenLabsApiKey;
+    
+    if (!keyToTest) {
+      setVoiceApiTestResult({
+        success: false,
+        message: 'Please enter an ElevenLabs API key first'
+      });
+      return;
+    }
+
+    setIsTestingVoiceApi(true);
+    setVoiceApiTestResult(null);
+
+    try {
+      const service = new ElevenLabsService(keyToTest);
+      // Get available voices to test the API key
+      const voices = await service.getVoices();
+      
+      setVoiceApiTestResult({
+        success: true,
+        message: `API test successful! Found ${voices.length} voices.`,
+        voicesCount: voices.length,
+        voices: voices
+      });
+      
+    } catch (error) {
+      console.error('ElevenLabs API test error:', error);
+      let errorMessage = error.message;
+      
+      // Make error messages more user-friendly
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        errorMessage = 'API key is invalid or has expired.';
+      } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+        errorMessage = 'API key does not have sufficient permissions.';
+      } else if (error.message.includes('429') || error.message.includes('Too Many Requests')) {
+        errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+      }
+      
+      setVoiceApiTestResult({
+        success: false,
+        message: `API test failed: ${errorMessage}`
+      });
+    } finally {
+      setIsTestingVoiceApi(false);
+    }
+  };
+
   // Save API key
   const handleApiKeySubmit = (newApiKey) => {
     try {
@@ -106,6 +180,29 @@ function App() {
       console.error('API key validation error:', error);
       alert(`Error with API key: ${error.message}. Please check your API key and try again.`);
     }
+  };
+  
+  // Save ElevenLabs API key
+  const handleElevenLabsApiKeySubmit = (newApiKey) => {
+    try {
+      localStorage.setItem('elevenlabs_api_key', newApiKey);
+      setElevenLabsApiKey(newApiKey);
+      
+      // Initialize the service
+      const service = new ElevenLabsService(newApiKey);
+      setElevenLabsService(service);
+      
+      console.log('ElevenLabs API key saved successfully');
+    } catch (error) {
+      console.error('ElevenLabs API key validation error:', error);
+      alert(`Error with ElevenLabs API key: ${error.message}. Please check your API key and try again.`);
+    }
+  };
+  
+  // Toggle voice enabled setting
+  const handleToggleVoice = (enabled) => {
+    setIsVoiceEnabled(enabled);
+    localStorage.setItem('voice_enabled', enabled ? 'true' : 'false');
   };
 
   // Toggle settings panel
@@ -150,6 +247,23 @@ function App() {
   const handleSaveChat = (chatData) => {
     // Save chat functionality
     console.log('Saving chat:', chatData);
+    
+    // Format and save chat history as a JSON file
+    const chatJson = JSON.stringify(chatData, null, 2);
+    const chatTitle = character?.name ? `${character.name}_chat` : 'narrative_forge_chat';
+    const filename = `${chatTitle}_${new Date().toISOString().split('T')[0]}.json`;
+    
+    const blob = new Blob([chatJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create temp link and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    
+    // Clean up
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
   // Reset to welcome screen
@@ -161,13 +275,24 @@ function App() {
     }
   };
 
-  // Load API key from local storage on first render
+  // Load stored settings from local storage on first render
   useEffect(() => {
+    // Load Gemini API key
     const savedApiKey = localStorage.getItem('gemini_api_key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
       setIsApiKeySet(true);
     }
+    
+    // Load ElevenLabs API key
+    const savedElevenLabsApiKey = localStorage.getItem('elevenlabs_api_key');
+    if (savedElevenLabsApiKey) {
+      setElevenLabsApiKey(savedElevenLabsApiKey);
+    }
+    
+    // Load voice enabled setting
+    const voiceEnabled = localStorage.getItem('voice_enabled') === 'true';
+    setIsVoiceEnabled(voiceEnabled);
   }, []);
 
   // Get background image for the scenario
@@ -193,6 +318,11 @@ function App() {
           <div className="app-subtitle">Character-driven roleplay</div>
         </div>
         <div className="header-right">
+          {isVoiceEnabled && (
+            <div className="voice-indicator">
+              {elevenLabsService ? "🎤 Voice enabled" : "🎤 Voice settings needed"}
+            </div>
+          )}
           <button className="settings-btn" onClick={toggleSettings}>
             ⚙️ Settings
           </button>
@@ -210,6 +340,14 @@ function App() {
           isTestingApi={isTestingApi}
           apiTestResult={apiTestResult}
           onSaveApiKey={handleApiKeySubmit}
+          elevenLabsApiKey={elevenLabsApiKey}
+          setElevenLabsApiKey={setElevenLabsApiKey}
+          isVoiceEnabled={isVoiceEnabled}
+          setIsVoiceEnabled={handleToggleVoice}
+          testVoiceApiKey={testVoiceApiKey}
+          isTestingVoiceApi={isTestingVoiceApi}
+          voiceApiTestResult={voiceApiTestResult}
+          onSaveElevenLabsApiKey={handleElevenLabsApiKeySubmit}
         />
       )}
 
@@ -276,6 +414,8 @@ function App() {
                 scenario={scenario}
                 onSaveChat={handleSaveChat}
                 geminiService={geminiService}
+                elevenLabsService={elevenLabsService}
+                isVoiceEnabled={isVoiceEnabled}
                 onReset={handleReset}
               />
             </ChatBackground>

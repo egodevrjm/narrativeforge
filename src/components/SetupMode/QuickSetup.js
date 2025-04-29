@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshCw, FileText } from 'lucide-react';
+import { RefreshCw, FileText, Loader } from 'lucide-react';
 
 /**
  * QuickSetup - A streamlined setup component allowing users to input
@@ -39,15 +39,18 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
   };
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingError, setProcessingError] = useState(null);
+  const [parsedData, setParsedData] = useState(null);
 
   // Process the text and try to extract character and scenario information
   const processSetupText = async () => {
     try {
       setIsProcessing(true);
       setProcessingError(null);
+      setParsedData(null);
 
       if (!setupText.trim()) {
         setProcessingError('Please enter some text before processing');
+        setIsProcessing(false);
         return;
       }
 
@@ -113,12 +116,25 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
             if (matches && matches.length > 0) {
               // Use the largest match (most complete JSON)
               const jsonString = matches.reduce((a, b) => a.length > b.length ? a : b);
-              const parsedData = JSON.parse(jsonString);
+              const parsed = JSON.parse(jsonString);
               
               // Validate the data structure
-              if (parsedData.character && parsedData.scenario) {
+              if (parsed.character && parsed.scenario) {
+                // Ensure character name exists or set default
+                if (!parsed.character.name || parsed.character.name.trim() === '') {
+                  parsed.character.name = 'Unnamed Character';
+                }
+                
+                // Ensure scenario title exists or set default
+                if (!parsed.scenario.title || parsed.scenario.title.trim() === '') {
+                  parsed.scenario.title = 'Untitled Scenario';
+                }
+                
+                // Store the parsed data for try again functionality
+                setParsedData(parsed);
+                
                 // Success! Pass the data to parent
-                onSave(parsedData.character, parsedData.scenario);
+                onSave(parsed.character, parsed.scenario);
                 return;
               } else {
                 throw new Error('Parsed JSON is missing required character or scenario data');
@@ -194,6 +210,9 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
       });
     }
 
+    // Store the parsed data for try again functionality
+    setParsedData({ character, scenario });
+    
     onSave(character, scenario);
   };
 
@@ -258,6 +277,25 @@ The AI will attempt to parse this information, even if it's not perfectly struct
         {processingError && (
           <div className="processing-error">
             <p>{processingError}</p>
+            {parsedData ? (
+              <button 
+                className="try-again-btn" 
+                onClick={() => onSave(parsedData.character, parsedData.scenario)}
+                type="button"
+              >
+                Continue Anyway
+              </button>
+            ) : (
+              <button 
+                className="try-again-btn" 
+                onClick={processSetupText}
+                disabled={isProcessing}
+                type="button"
+              >
+                Try Again
+                {isProcessing && <RefreshCw size={16} className="spinning" />}
+              </button>
+            )}
           </div>
         )}
 
@@ -268,8 +306,14 @@ The AI will attempt to parse this information, even if it's not perfectly struct
             onClick={processSetupText}
             disabled={isProcessing || !setupText.trim()}
           >
-            {isProcessing ? 'Processing...' : 'Process and Start Roleplay'}
-            {isProcessing && <RefreshCw size={18} className="spinning" />}
+            {isProcessing ? (
+              <>
+                <Loader size={20} className="spinning" />
+                Processing...
+              </>
+            ) : (
+              'Process and Start Roleplay'
+            )}
           </button>
         </div>
       </div>

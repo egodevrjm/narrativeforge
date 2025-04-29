@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuickSetup from './components/SetupMode/QuickSetup';
 import './components/SetupMode/QuickSetup.css';
-import CharacterProfile from './components/CharacterProfile';
-import ScenarioBuilder from './components/ScenarioBuilder';
+import SetupWizard from './components/SetupWizard/SetupWizard';
 import ChatInterface from './components/ChatInterface';
 import ScenarioSelection from './components/ScenarioSelection';
 import Settings from './components/Settings';
@@ -116,9 +115,19 @@ function App() {
 
   // Handle scenario selection
   const handleSelectScenario = (scenarioData) => {
-    setCharacter(scenarioData.character);
-    setScenario(scenarioData.scenario);
-    setCurrentStep('chat');
+    // Reset everything first to prevent contamination
+    if (geminiService) {
+      geminiService.reset();
+    }
+    setCharacter(null);
+    setScenario(null);
+    
+    // Set new scenario data
+    setTimeout(() => {
+      setCharacter(scenarioData.character);
+      setScenario(scenarioData.scenario);
+      setCurrentStep('chat');
+    }, 100);
   };
 
   // Handle 'Create your own' selection
@@ -126,25 +135,13 @@ function App() {
     if (mode === 'quick') {
       setCurrentStep('quickSetup');
     } else {
-      setCurrentStep('character');
+      setCurrentStep('setupWizard');
     }
   };
 
-  // Handle saving setup data (character and scenario together from quick setup)
+  // Handle saving setup data (character and scenario together from wizard or quick setup)
   const handleSaveSetup = (characterData, scenarioData) => {
     setCharacter(characterData);
-    setScenario(scenarioData);
-    setCurrentStep('chat');
-  };
-
-  // Handle saving character data
-  const handleSaveCharacter = (characterData) => {
-    setCharacter(characterData);
-    setCurrentStep('scenario');
-  };
-
-  // Handle saving scenario data
-  const handleSaveScenario = (scenarioData) => {
     setScenario(scenarioData);
     setCurrentStep('chat');
   };
@@ -253,19 +250,9 @@ function App() {
           </div>
         )}
 
-        {currentStep === 'character' && (
-          <CharacterProfile 
-            onSave={handleSaveCharacter} 
-            initialData={null}
-            geminiService={geminiService}
-            onReset={handleReset}
-          />
-        )}
-
-        {currentStep === 'scenario' && (
-          <ScenarioBuilder 
-            onSave={handleSaveScenario} 
-            initialData={null}
+        {currentStep === 'setupWizard' && (
+          <SetupWizard
+            onSave={handleSaveSetup}
             geminiService={geminiService}
             onReset={handleReset}
           />
@@ -280,17 +267,19 @@ function App() {
         )}
 
         {currentStep === 'chat' && (
-          <ChatBackground 
-            backgroundImage={getScenarioImage(scenario?.id)}
-          >
-            <ChatInterface 
-              character={character}
-              scenario={scenario}
-              onSaveChat={handleSaveChat}
-              geminiService={geminiService}
-              onReset={handleReset}
-            />
-          </ChatBackground>
+          <div className="chat-container">
+            <ChatBackground 
+              backgroundImage={getScenarioImage(scenario?.id)}
+            >
+              <ChatInterface 
+                character={character}
+                scenario={scenario}
+                onSaveChat={handleSaveChat}
+                geminiService={geminiService}
+                onReset={handleReset}
+              />
+            </ChatBackground>
+          </div>
         )}
       </main>
 
@@ -311,10 +300,9 @@ function App() {
         ) : (
           <>
             <div className="progress-indicator">
-              {currentStep === 'character' || currentStep === 'scenario' ? (
+              {currentStep === 'setupWizard' ? (
                 <>
-                  <div className={`step ${currentStep === 'character' ? 'active' : ''}`}>Character</div>
-                  <div className={`step ${currentStep === 'scenario' ? 'active' : ''}`}>Scenario</div>
+                  <div className="step active">Setup Wizard</div>
                   <div className="step">Roleplay</div>
                 </>
               ) : currentStep === 'quickSetup' ? (

@@ -29,45 +29,46 @@ class GeminiService {
    * @param {Object} scenarioDetails - The scenario setup details
    */
   initialize(characterProfile, scenarioDetails) {
+    // First reset everything completely to avoid any contamination
+    this.reset();
+    
+    // Then set the new character and scenario
     this.characterProfile = characterProfile;
     this.scenarioDetails = scenarioDetails;
     this.history = [];
 
-    // Create system message that sets up the context
+    // Create comprehensive system message that sets up the context
     const systemContext = this._createSystemContext();
-    // System instructions should generally be 'user' role for the *first* turn
-    // Then the model responds. However, Gemini's multi-turn chat expects alternating roles.
-    // For initial setup, placing it as 'model' might work if followed by user input,
-    // but often it's better to combine setup instructions into the first 'user' message
-    // or use the dedicated `system_instruction` field if the API version supports it.
-    // Let's keep your structure for now, but be mindful of this.
+    
+    // Gemini's multi-turn chat expects alternating roles.
+    // According to best practices, we'll setup the initial context as 'model' role,
+    // then follow with a user prompt to establish the turn structure
     this.history.push({
-      role: 'model', // Or potentially 'user' if it's the very first thing
+      role: 'model',
       parts: [{ text: systemContext }]
     });
 
-    // If there are roleplay instructions, add them as system context (as 'model' role again)
+    // If there are roleplay instructions, add them by updating the system message
     if (scenarioDetails.roleplayInstructions) {
-       // Combine instructions with initial context or place strategically.
-       // Adding multiple 'model' turns consecutively might confuse the structure.
-       // Let's merge it into the first system message or ensure a 'user' turn happens before the actual chat.
-       // For simplicity, let's append it to the initial context message:
+       // Append to the initial context message for a more cohesive instruction set
        const initialModelMessage = this.history[0];
-       initialModelMessage.parts[0].text += `\n\nRoleplay Instructions:\n\n${scenarioDetails.roleplayInstructions}`;
-
-      // Original logic (kept commented out for reference):
-      // this.history.push({
-      //   role: 'model',
-      //   parts: [{ text: `Roleplay Instructions:\n\n${scenarioDetails.roleplayInstructions}` }]
-      // });
+       initialModelMessage.parts[0].text += `\n\n## Additional Roleplay Instructions:\n\n${scenarioDetails.roleplayInstructions}`;
     }
-     // Add an initial user prompt to kick off the conversation after setup
-     // This helps establish the user/model turn structure
-     this.history.push({
-        role: 'user',
-        parts: [{ text: "Okay, I understand the setup. Let's begin the roleplay." }]
-     });
-     // Expect the model's first response acknowledging the start
+    
+    // Add a narrative reminder to ensure the story follows the intended arc
+    // and that the AI properly adheres to the narrative structure
+    if (scenarioDetails.narrativeGoals) {
+      const initialModelMessage = this.history[0];
+      initialModelMessage.parts[0].text += `\n\n## Important Narrative Reminder:\nFollow the narrative goals described above. The story should progress from the initial situation and develop toward the themes and goals specified. Keep your responses consistent with the established setting, characters, and tone. Always respect the user's agency while guiding the story along the intended narrative arc. Start exactly from the moment described in the initial situation.`;
+    }
+    
+    // Add an initial user prompt to kick off the conversation after setup
+    // This helps establish the user/model turn structure
+    this.history.push({
+       role: 'user',
+       parts: [{ text: "I understand the character and scenario. Please start the roleplay by setting the scene exactly as described in the initial situation, introducing the environment and appropriate characters. Begin precisely at the moment described in the initial situation." }]
+    });
+    // Expect the model's first response to be the scene-setting based on the initial situation
   }
 
   /**
@@ -372,11 +373,11 @@ class GeminiService {
    * @returns {string} - Formatted system context
    */
   _createSystemContext() {
-    // This function remains the same, defining the initial context.
-    const { name, age, physicalDescription, background, personality } = this.characterProfile || {};
-    const { title, setting, initialSituation, otherCharacters, toneAndThemes } = this.scenarioDetails || {};
+    // Enhanced system context creation to better follow the narrative
+    const { name, age, physicalDescription, background, personality, relationships, additionalNotes } = this.characterProfile || {};
+    const { title, setting, initialSituation, otherCharacters, toneAndThemes, narrativeGoals } = this.scenarioDetails || {};
 
-    // Create detailed system prompt - ensure defaults if objects are null/undefined
+    // Create detailed system prompt with expanded narrative guidance
     return `
 You are an AI assisting in a roleplaying scenario titled "${title || 'Untitled Scenario'}". Your primary function is to portray all characters and narrative elements EXCEPT the main protagonist, whose inputs will be provided by the user.
 
@@ -387,6 +388,12 @@ Physical Description: ${physicalDescription || 'Not provided'}
 Background: ${background || 'Not provided'}
 Personality: ${personality || 'Not provided'}
 
+## Character Relationships
+${relationships?.map(rel => `- ${rel.name} (${rel.relationshipType}): ${rel.description || 'No description.'}`).join('\n') || 'No relationships specified.'}
+
+## Additional Character Notes
+${additionalNotes || 'No additional notes.'}
+
 ## Scenario Setting
 Location: ${setting?.location || 'Unspecified'}
 Time: ${setting?.time || 'Unspecified'}
@@ -394,6 +401,9 @@ Atmosphere: ${setting?.atmosphere || 'Unspecified'}
 
 ## Initial Situation
 ${initialSituation || 'No initial situation provided.'}
+
+## Narrative Goals
+${narrativeGoals || 'No specific narrative goals specified.'}
 
 ## Other Characters (Portrayed by You, the AI)
 ${otherCharacters?.map(char => `
@@ -406,14 +416,18 @@ ${toneAndThemes || 'No specific tone or themes specified.'}
 
 ## Core Roleplay Instructions for You (the AI):
 1.  **Portray Non-Protagonist Roles:** You embody all characters listed under "Other Characters" and act as the narrator describing the environment and events. Do NOT act as the protagonist ('${name || 'Unnamed'}').
-2.  **Stay In Character:** Maintain the personalities and motivations of the characters you portray. Use descriptive language for narration.
+2.  **Stay In Character:** Maintain the personalities and motivations of the characters you portray. Use descriptive language for narration that aligns with the scenario's tone.
 3.  **React Realistically:** Respond dynamically to the protagonist's dialogue, actions, and thoughts (marked as [DIALOGUE], [ACTION], [THOUGHT]).
 4.  **Maintain Atmosphere:** Ensure your responses reflect the specified tone, themes, and setting atmosphere.
-5.  **Format Clearly:** Use standard prose. Indicate dialogue using quotation marks (" "). Describe actions and scenery narratively. Avoid meta-commentary unless specifically instructed via a System Note.
-6.  **Advance the Story:** Collaborate with the user to move the narrative forward based on their choices, while staying true to the scenario.
-7.  **Response Length:** Aim for immersive yet reasonably concise responses (typically 1-4 paragraphs), unless the situation calls for more or less detail.
-8.  **Authenticity:** Be creative, emotionally resonant, and consistent with the established world and characters.
-9.  **No Meta-Roleplay:** Do not mention that this is a roleplay, that you are an AI, or discuss the instructions themselves within your narrative responses.
+5.  **Follow the Narrative Arc:** Keep the story aligned with the specified narrative goals while allowing for user agency. Introduce appropriate challenges, developments, and interactions that move the story forward in the intended direction.
+6.  **Format Clearly:** Use standard prose. Indicate dialogue using quotation marks (" "). Describe actions and scenery narratively. Avoid meta-commentary unless specifically instructed via a System Note.
+7.  **Advance the Story:** Collaborate with the user to move the narrative forward based on their choices, while staying true to the scenario.
+8.  **Response Length:** Aim for immersive yet reasonably concise responses (typically 1-4 paragraphs), unless the situation calls for more or less detail.
+9.  **Authenticity:** Be creative, emotionally resonant, and consistent with the established world and characters.
+10. **Honor Narrative Consistency:** Keep track of what has happened in the story so far and maintain consistency with previous events, character behaviors, and established facts.
+11. **No Meta-Roleplay:** Do not mention that this is a roleplay, that you are an AI, or discuss the instructions themselves within your narrative responses.
+
+When starting the roleplay, begin by setting the scene exactly as described in the initial situation, introducing the environment and context before any character actions occur.
 `;
   }
 
@@ -448,18 +462,11 @@ ${toneAndThemes || 'No specific tone or themes specified.'}
    */
   reset() {
     console.log("Resetting GeminiService chat history and context...");
-    const currentCharacterProfile = this.characterProfile;
-    const currentScenarioDetails = this.scenarioDetails;
+    // Clear everything completely - don't reuse anything
     this.history = [];
     this.characterProfile = null;
     this.scenarioDetails = null;
-
-    if (currentCharacterProfile && currentScenarioDetails) {
-        console.log("Re-initializing with previous character and scenario.");
-        this.initialize(currentCharacterProfile, currentScenarioDetails);
-    } else {
-        console.log("Service reset. Call initialize() to set up character and scenario again.");
-    }
+    console.log("Service reset. Call initialize() to set up character and scenario again.");
   }
 }
 

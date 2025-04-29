@@ -298,11 +298,35 @@
   gap: 8px;
 }
 
-/* Phone input area */
-.phone-input-area {
+/* Phone actions area with improved exit button */
+.phone-actions {
   padding: 10px;
   background-color: var(--input-bg);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exit-phone-btn {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.exit-phone-btn:hover {
+  background-color: #9d4edd;
 }
 
 .phone-input-field {

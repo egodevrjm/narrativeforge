@@ -2,14 +2,17 @@ import React from 'react';
 import './MobilePhoneUI.css';
 
 const MobilePhoneUI = ({ messages, onSendMessage }) => {
-  // Use current time for the status bar display
-  // const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  // TODO: Implement status bar with currentTime when adding that UI element
-  
   // Handle sending a message from the phone UI
   const handlePhoneInput = () => {
     if (onSendMessage) {
       onSendMessage('What do you do?');
+    }
+  };
+
+  // Handle exiting phone mode
+  const handleExitPhone = () => {
+    if (onSendMessage) {
+      onSendMessage('Put phone away');
     }
   };
   
@@ -257,13 +260,19 @@ const MobilePhoneUI = ({ messages, onSendMessage }) => {
         ))}
       </div>
       
-      <div className="phone-input-area">
+      <div className="phone-actions">
+        <button className="exit-phone-btn" onClick={handleExitPhone}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 16l-4-4 4-4"></path>
+            <path d="M22 12H10"></path>
+            <path d="M2 17V7a2 2 0 012-2h14a2 2 0 012 2v1"></path>
+          </svg>
+          Put Phone Away
+        </button>
         <div className="phone-input-field" onClick={handlePhoneInput}>
           What do you do?
         </div>
       </div>
-      
-      <div className="phone-bottom-bar"></div>
     </div>
   );
 };

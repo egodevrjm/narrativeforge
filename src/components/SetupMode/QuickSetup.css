@@ -115,12 +115,40 @@
   padding: 1rem;
   border-radius: 0.25rem;
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .processing-error p {
-  margin: 0;
+  margin: 0 0 0.75rem 0;
   color: #e74c3c;
   font-size: 0.95rem;
+}
+
+.try-again-btn {
+  background-color: rgba(231, 76, 60, 0.2);
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.try-again-btn:hover:not(:disabled) {
+  background-color: rgba(231, 76, 60, 0.3);
+  transform: translateY(-1px);
+}
+
+.try-again-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .quick-setup-help {

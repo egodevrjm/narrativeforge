@@ -1,5 +1,6 @@
 import React from 'react';
 import SimpleSupabaseCheck from './SimpleSupabaseCheck';
+import DirectCheck from './DirectCheck';
 import './AdminStyles.css';
 
 const SupabaseChecker = () => {
@@ -8,6 +9,8 @@ const SupabaseChecker = () => {
       <div className="admin-verification-page">
         <h1>NarrativeForge Supabase Connection Test</h1>
         <div className="admin-verification-card">
+          <DirectCheck />
+          <hr style={{ margin: '20px 0' }} />
           <SimpleSupabaseCheck />
         </div>
         

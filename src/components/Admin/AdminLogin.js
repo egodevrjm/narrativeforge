@@ -15,9 +15,11 @@ const AdminLogin = ({ onLogin }) => {
 
     try {
       // First check if the connection to Supabase is working
-      await SupabaseService.healthCheck().catch(err => {
-        throw new Error(`Supabase connection failed: ${err.message}`);
-      });
+      try {
+        await SupabaseService.healthCheck();
+      } catch (connError) {
+        throw new Error(`Supabase connection failed: ${connError.message}`);
+      }
       
       // Then try to sign in
       await SupabaseService.signIn(email, password);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
 import SimpleSupabaseCheck from './SimpleSupabaseCheck';
+import DirectCheck from './DirectCheck';
 import SupabaseService from '../../services/supabase/supabaseService';
 import './AdminStyles.css';
 
@@ -61,7 +62,7 @@ const Admin = () => {
       <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f44336', color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
         ADMIN PAGE
       </div>
-      <SimpleSupabaseCheck />
+      <DirectCheck />
       {isAuthenticated ? (
         <AdminDashboard onLogout={handleLogout} />
       ) : (

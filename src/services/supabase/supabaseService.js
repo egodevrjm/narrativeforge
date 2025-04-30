@@ -14,18 +14,17 @@ const SupabaseService = {
   healthCheck: async () => {
     try {
       // First try the RPC function if it exists
-      const { data: healthData, error: healthError } = await supabase.rpc('get_supabase_health').catch(() => {
-        return { data: null, error: new Error('Health check RPC not available') };
-      });
+      let { data: healthData, error: healthError } = await supabase.rpc('get_supabase_health');
       
       if (healthError) {
+        console.log('RPC not available, trying basic table access');
         // Try a simple table check instead
         const { data, error } = await supabase.from('scenarios').select('id').limit(1);
         if (error) throw error;
         return { status: 'ok', method: 'table_check' };
       }
       
-      return healthData;
+      return healthData || { status: 'ok', method: 'rpc' };
     } catch (error) {
       console.error('Health check error:', error);
       throw error;

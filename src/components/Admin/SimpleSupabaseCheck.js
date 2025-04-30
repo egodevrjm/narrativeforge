@@ -28,14 +28,31 @@ const SimpleSupabaseCheck = () => {
           throw new Error('Supabase environment variables are missing');
         }
         
-        // Try the simplest possible query - just a health check
+        // Check if we can connect directly to a simple table
+        let basicTableConnected = false;
+        try {
+          const { data, error } = await supabase.from('scenarios').select('id').limit(1);
+          if (!error) {
+            basicTableConnected = true;
+          }
+        } catch (tableError) {
+          console.log('Basic table check failed:', tableError);
+        }
+        
+        if (basicTableConnected) {
+          setDebugInfo(prev => ({ ...prev, healthCheck: true }));
+          setStatus('connected');
+          return;
+        }
+        
+        // Try to use the health check service
         try {
           const healthData = await SupabaseService.healthCheck();
           console.log('Health check successful:', healthData);
           setDebugInfo(prev => ({ ...prev, healthCheck: true }));
           setStatus('connected');
         } catch (healthErr) {
-          console.error('Health check failed:', healthErr);
+          console.error('All health checks failed:', healthErr);
           throw healthErr;
         }
       } catch (err) {

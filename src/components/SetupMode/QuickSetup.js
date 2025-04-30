@@ -38,6 +38,7 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
     setSetupText(sampleContent);
   };
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState('');
   const [processingError, setProcessingError] = useState(null);
   const [parsedData, setParsedData] = useState(null);
 
@@ -45,6 +46,7 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
   const processSetupText = async () => {
     try {
       setIsProcessing(true);
+      setProcessingStatus('Preparing to process your character and scenario...');
       setProcessingError(null);
       setParsedData(null);
 
@@ -56,6 +58,7 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
 
       // Option 1: Use Gemini to parse the input if service is available
       if (geminiService) {
+        setProcessingStatus('Creating AI prompt to extract character and scenario details...');
         const prompt = `Extract character and scenario details from the following roleplay setup text. 
         
         TEXT:
@@ -105,7 +108,9 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
         Do your best to extract meaningful information even if the text is not structured. If relationships or other characters aren't explicitly mentioned, create reasonable entries based on the context, or leave arrays empty if there's nothing to work with. Only respond with the JSON object and no other text.`;
 
         try {
+          setProcessingStatus('Sending request to Gemini AI...');
           const response = await geminiService.generateGeneric(prompt);
+          setProcessingStatus('Received AI response, processing data...');
           
           // Try to parse the JSON response
           try {
@@ -117,6 +122,8 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
               // Use the largest match (most complete JSON)
               const jsonString = matches.reduce((a, b) => a.length > b.length ? a : b);
               const parsed = JSON.parse(jsonString);
+              
+              setProcessingStatus('Successfully extracted character and scenario data!');
               
               // Validate the data structure
               if (parsed.character && parsed.scenario) {
@@ -159,6 +166,7 @@ Tone and themes: Environmental justice, small-town secrets, corporate corruption
       setProcessingError(`An error occurred: ${error.message}`);
     } finally {
       setIsProcessing(false);
+      setProcessingStatus('');
     }
   };
 
@@ -316,6 +324,17 @@ The AI will attempt to parse this information, even if it's not perfectly struct
             )}
           </button>
         </div>
+        
+        {isProcessing && (
+          <div className="ai-loading-indicator setup-processor">
+            <div className="ai-thinking-animation">
+              <div className="ai-dot"></div>
+              <div className="ai-dot"></div>
+              <div className="ai-dot"></div>
+            </div>
+            <div className="ai-status-message">{processingStatus || 'Processing your scenario...'}</div>
+          </div>
+        )}
       </div>
 
       <div className="quick-setup-help">

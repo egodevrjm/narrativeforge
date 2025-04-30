@@ -1,4 +1,19 @@
 /* Quick Setup Mode Styling */
+
+.setup-processor {
+  max-width: 100%;
+  margin: 20px 0;
+}
+
+.quick-setup-container .ai-loading-indicator {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.quick-setup-container .ai-status-message {
+  font-size: 0.95rem;
+  max-width: 80%;
+}
 .form-actions-top {
   display: flex;
   justify-content: space-between;

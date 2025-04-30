@@ -18,6 +18,7 @@ const ScenarioBuilder = ({ onSave, initialData, geminiService, onReset }) => {
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStatus, setGenerationStatus] = useState('');
   const [showInstructionsEditor, setShowInstructionsEditor] = useState(false);
 
   // Save roleplay instructions
@@ -39,6 +40,7 @@ const ScenarioBuilder = ({ onSave, initialData, geminiService, onReset }) => {
     try {
       // Show loading state
       setIsGenerating(true);
+      setGenerationStatus('Preparing prompt for AI...');
       
       // If we have Gemini service, use it
       if (geminiService) {
@@ -77,7 +79,9 @@ const ScenarioBuilder = ({ onSave, initialData, geminiService, onReset }) => {
         Do not include any explanation, preface, or conclusion. Respond ONLY with the JSON object.`;
         
         // Call Gemini API
+        setGenerationStatus('Sending request to Gemini AI...');
         const response = await geminiService.generateGeneric(prompt);
+        setGenerationStatus('Processing AI response...');
         
         // Parse the response as JSON
         try {
@@ -195,6 +199,7 @@ const ScenarioBuilder = ({ onSave, initialData, geminiService, onReset }) => {
       alert(`Failed to generate a random scenario: ${error.message}. Please try again.`);
     } finally {
       setIsGenerating(false);
+      setGenerationStatus('');
     }
   };
 
@@ -238,6 +243,18 @@ const ScenarioBuilder = ({ onSave, initialData, geminiService, onReset }) => {
     onSave(scenarioData);
   };
 
+  // Loading animation component
+  const LoadingIndicator = () => (
+    <div className="ai-loading-indicator">
+      <div className="ai-thinking-animation">
+        <div className="ai-dot"></div>
+        <div className="ai-dot"></div>
+        <div className="ai-dot"></div>
+      </div>
+      <div className="ai-status-message">{generationStatus || 'Processing...'}</div>
+    </div>
+  );
+
   return (
     <div className="scenario-builder-container">
       <h2>Scenario Builder</h2>
@@ -253,6 +270,8 @@ const ScenarioBuilder = ({ onSave, initialData, geminiService, onReset }) => {
           {isGenerating ? 'Generating...' : 'Generate Random Scenario'}
           <RefreshCw size={18} className={isGenerating ? 'spinning' : ''} />
         </button>
+        
+        {isGenerating && <LoadingIndicator />}
       </div>
       
       <form onSubmit={handleSubmit}>

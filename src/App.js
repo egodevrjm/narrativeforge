@@ -354,10 +354,6 @@ function App() {
       <main className="app-content">
         {currentStep === 'welcome' && (
           <div className="welcome-screen">
-            <div className="welcome-header">
-              <h1 className="welcome-title">Create Your Ultimate Roleplay</h1>
-              <p className="welcome-subtitle">Immerse yourself in character-driven narratives. Choose from our pre-designed scenarios or create your own unique experience.</p>
-            </div>
             
             {!isApiKeySet && (
               <ApiKeyWarning onOpenSettings={toggleSettings} />

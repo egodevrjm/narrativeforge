@@ -1,94 +1,4 @@
-  // Save current chat state
-  const saveCurrentChat = () => {
-    if (!geminiService || !character || !scenario || !chatId) {
-      console.error('Cannot save chat: missing required data');
-      return null;
-    }
-    
-    try {
-      // Get chat history from Gemini service
-      const geminiHistory = geminiService.exportChatHistory();
-      
-      // Create chat snapshot
-      const chatSnapshot = StorageService.saveChatSnapshot(
-        messages,
-        character,
-        scenario, 
-        geminiHistory
-      );
-      
-      console.log('Chat automatically saved:', chatSnapshot?.id);
-      return chatSnapshot;
-    } catch (error) {
-      console.error('Error saving chat snapshot:', error);
-      return null;
-    }
-  };
-  
-  // Handle manual save request
-  const handleSaveRequest = () => {
-    const savedChat = saveCurrentChat();
-    if (savedChat && typeof onSaveChat === 'function') {
-      onSaveChat(savedChat);
-    }
-  };
-
-  // Toggle auto-save feature
-  const toggleAutoSave = () => {
-    const newState = !autoSaveEnabled;
-    setAutoSaveEnabled(newState);
-    localStorage.setItem('auto_save_chat', newState.toString());
-  };
-  
-  // Load auto-save setting
-  useEffect(() => {
-    const savedAutoSave = localStorage.getItem('auto_save_chat');
-    if (savedAutoSave !== null) {
-      setAutoSaveEnabled(savedAutoSave === 'true');
-    }
-  }, []);
-
-  // Save chat state when component unmounts if auto-save is enabled
-  useEffect(() => {
-    return () => {
-      if (autoSaveEnabled && messages.length > 1) {
-        saveCurrentChat();
-      }
-    };
-  }, [autoSaveEnabled, messages]);
-
-  // Handle exporting chat to file
-  const handleExportChat = () => {
-    if (!messages.length) return;
-    
-    // Format and save chat history as a JSON file
-    const chatData = {
-      id: chatId,
-      title: character?.name ? `${character.name} - ${scenario?.title || 'Untitled'}` : 'Chat Export',
-      character: character,
-      scenario: scenario,
-      messages: messages,
-      geminiHistory: geminiService ? geminiService.exportChatHistory() : null,
-      exported: true,
-      exportDate: new Date().toISOString()
-    };
-    
-    const chatJson = JSON.stringify(chatData, null, 2);
-    const filename = `${chatData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.json`;
-    
-    const blob = new Blob([chatJson], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    // Create temp link and trigger download
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    
-    // Clean up
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-  };
-  import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './ChatInterface.css';
 import VoiceSelector from './VoiceSelector';
 import StorageService from '../services/storageService';
@@ -308,6 +218,12 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
     const savedAutoplay = localStorage.getItem('voice_autoplay');
     if (savedAutoplay !== null) {
       setAutoplayEnabled(savedAutoplay === 'true');
+    }
+
+    // Load auto-save setting
+    const savedAutoSave = localStorage.getItem('auto_save_chat');
+    if (savedAutoSave !== null) {
+      setAutoSaveEnabled(savedAutoSave === 'true');
     }
   }, []);
   
@@ -554,6 +470,89 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
       }
     };
   }, [elevenLabsService]);
+
+  // Save current chat state
+  const saveCurrentChat = () => {
+    if (!geminiService || !character || !scenario || !chatId) {
+      console.error('Cannot save chat: missing required data');
+      return null;
+    }
+    
+    try {
+      // Get chat history from Gemini service
+      const geminiHistory = geminiService.exportChatHistory();
+      
+      // Create chat snapshot
+      const chatSnapshot = StorageService.saveChatSnapshot(
+        messages,
+        character,
+        scenario, 
+        geminiHistory
+      );
+      
+      console.log('Chat automatically saved:', chatSnapshot?.id);
+      return chatSnapshot;
+    } catch (error) {
+      console.error('Error saving chat snapshot:', error);
+      return null;
+    }
+  };
+  
+  // Handle manual save request
+  const handleSaveRequest = () => {
+    const savedChat = saveCurrentChat();
+    if (savedChat && typeof onSaveChat === 'function') {
+      onSaveChat(savedChat);
+    }
+  };
+
+  // Toggle auto-save feature
+  const toggleAutoSave = () => {
+    const newState = !autoSaveEnabled;
+    setAutoSaveEnabled(newState);
+    localStorage.setItem('auto_save_chat', newState.toString());
+  };
+
+  // Save chat state when component unmounts if auto-save is enabled
+  useEffect(() => {
+    return () => {
+      if (autoSaveEnabled && messages.length > 1) {
+        saveCurrentChat();
+      }
+    };
+  }, [autoSaveEnabled, messages]);
+
+  // Handle exporting chat to file
+  const handleExportChat = () => {
+    if (!messages.length) return;
+    
+    // Format and save chat history as a JSON file
+    const chatData = {
+      id: chatId,
+      title: character?.name ? `${character.name} - ${scenario?.title || 'Untitled'}` : 'Chat Export',
+      character: character,
+      scenario: scenario,
+      messages: messages,
+      geminiHistory: geminiService ? geminiService.exportChatHistory() : null,
+      exported: true,
+      exportDate: new Date().toISOString()
+    };
+    
+    const chatJson = JSON.stringify(chatData, null, 2);
+    const filename = `${chatData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.json`;
+    
+    const blob = new Blob([chatJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create temp link and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    
+    // Clean up
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  };
   
   return (
     <div className="chat-interface">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
+import SupabaseVerification from './SupabaseVerification';
 import SupabaseService from '../../services/supabase/supabaseService';
 import './AdminStyles.css';
 
@@ -55,6 +56,7 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
+      <SupabaseVerification />
       {isAuthenticated ? (
         <AdminDashboard onLogout={handleLogout} />
       ) : (

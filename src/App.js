@@ -15,6 +15,7 @@ import { defaultCharacter, defaultScenario } from './templates/defaultTemplate.j
 import { preDesignedScenarios } from './templates/preDesignedScenarios.js';
 import ChatBackground from './components/ChatBackground.js';
 import Admin from './components/Admin/Admin.js';
+import SupabaseChecker from './components/Admin/SupabaseChecker.js';
 import './layout.css';
 import './theme.css';
 import './App.css';
@@ -523,6 +524,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/admin" element={<Admin />} />
+        <Route path="/supabase-check" element={<SupabaseChecker />} />
         <Route path="/*" element={<Main />} />
       </Routes>
     </Router>

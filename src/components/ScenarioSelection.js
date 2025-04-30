@@ -7,7 +7,9 @@ import './ScenarioSelection.css';
 const scenarioImages = {
   'betrayal-melody': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=60',
   'detective-noir': 'https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=800&q=60',
-  'space-explorer': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=60'
+  'space-explorer': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=60',
+  'lost-enchanter': 'https://images.unsplash.com/photo-1509068524745-2d2e8334bce9?auto=format&fit=crop&w=800&q=60',
+  'neon-hacker': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=60'
 };
 
 const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
@@ -123,6 +125,10 @@ function getScenarioTags(scenario) {
     tags.push('Mystery', 'Crime', 'Noir');
   } else if (scenario.id === 'space-explorer') {
     tags.push('Sci-Fi', 'Adventure', 'Discovery');
+  } else if (scenario.id === 'lost-enchanter') {
+    tags.push('Fantasy', 'Magic', 'Mystery');
+  } else if (scenario.id === 'neon-hacker') {
+    tags.push('Cyberpunk', 'Dystopia', 'Tech');
   }
   
   return tags;
@@ -137,6 +143,10 @@ function getScenarioTag(id) {
       return 'Mystery';
     case 'space-explorer':
       return 'Sci-Fi';
+    case 'lost-enchanter':
+      return 'Fantasy';
+    case 'neon-hacker':
+      return 'Cyberpunk';
     default:
       return 'Adventure';
   }

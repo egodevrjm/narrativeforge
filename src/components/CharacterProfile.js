@@ -97,8 +97,8 @@ const CharacterProfile = ({ onSave, initialData, geminiService, onReset }) => {
               
               // Create a minimum valid character object
               const manualCharacter = {
-                name: nameMatch ? nameMatch[1] : "Generated Character",
-                age: ageMatch ? ageMatch[1] : "25",
+                name: nameMatch ? nameMatch[1] : "", // Empty to prompt user to fill in
+                age: ageMatch ? ageMatch[1] : "", // Empty to prompt user to fill in
                 physicalDescription: physDescMatch ? physDescMatch[1].trim() : 
                   "The AI provided a description but it couldn't be properly extracted.",
                 background: backgroundMatch ? backgroundMatch[1].trim() : 
@@ -263,6 +263,11 @@ const CharacterProfile = ({ onSave, initialData, geminiService, onReset }) => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Check for required fields before saving
+    if (!characterData.name || !characterData.age) {
+      alert("Please provide both a name and age for your character before saving.");
+      return;
+    }
     onSave(characterData);
   };
 
@@ -293,23 +298,39 @@ const CharacterProfile = ({ onSave, initialData, geminiService, onReset }) => {
         <div className="form-section">
           <h3>Basic Information</h3>
           <div className="form-group">
-            <label>Name</label>
-            <input
-              type="text"
-              value={characterData.name}
-              onChange={(e) => setCharacterData({...characterData, name: e.target.value})}
-              placeholder="Character's name"
-            />
+            <label>Name <span className="required-field">*</span></label>
+            <div className="input-with-button">
+              <input
+                type="text"
+                value={characterData.name}
+                onChange={(e) => setCharacterData({...characterData, name: e.target.value})}
+                placeholder="Character's name"
+                className={!characterData.name ? "highlight-missing" : ""}
+              />
+              {!characterData.name && (
+                <div className="missing-field-message">
+                  Character name is required. Please enter a name.
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="form-group">
-            <label>Age</label>
-            <input
-              type="text"
-              value={characterData.age}
-              onChange={(e) => setCharacterData({...characterData, age: e.target.value})}
-              placeholder="Character's age"
-            />
+            <label>Age <span className="required-field">*</span></label>
+            <div className="input-with-button">
+              <input
+                type="text"
+                value={characterData.age}
+                onChange={(e) => setCharacterData({...characterData, age: e.target.value})}
+                placeholder="Character's age"
+                className={!characterData.age ? "highlight-missing" : ""}
+              />
+              {!characterData.age && (
+                <div className="missing-field-message">
+                  Character age is required. Please enter an age.
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

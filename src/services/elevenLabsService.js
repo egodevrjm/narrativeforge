@@ -198,11 +198,22 @@ class ElevenLabsService {
    */
   async speechToText(audioBlob) {
     try {
+      console.log('Starting speech-to-text conversion...');
+      console.log('Audio blob type:', audioBlob.type);
+      console.log('Audio blob size:', audioBlob.size);
+      
       // Create FormData
       const formData = new FormData();
+      
+      // Convert to MP3 or another format if needed (WebM should work but let's be safe)
       formData.append('audio', audioBlob, 'recorded_audio.webm');
       
-      // Make API request
+      // Optional parameters for better recognition
+      formData.append('model_id', 'whisper-1'); // Use Whisper model
+      
+      console.log('Sending request to ElevenLabs speech-to-text API...');
+      
+      // Make API request with more detailed logging
       const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
         method: 'POST',
         headers: {
@@ -212,12 +223,16 @@ class ElevenLabsService {
         body: formData
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('ElevenLabs API error response:', errorText);
         throw new Error(`API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('Speech-to-text response:', data);
       return data.text || '';
     } catch (error) {
       console.error('Error converting speech to text:', error);

@@ -317,3 +317,75 @@
   font-size: 0.9rem;
   line-height: 1.4;
 }
+
+/* Speech-to-text test section */
+.speech-to-text-test {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(0, 150, 136, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 150, 136, 0.2);
+}
+
+.speech-to-text-test h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+}
+
+.test-stt-btn {
+  background-color: var(--accent-secondary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  margin: 10px 0;
+  transition: background-color 0.2s;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+}
+
+.test-stt-btn:hover {
+  background-color: var(--accent-primary);
+}
+
+.test-stt-btn:active {
+  transform: translateY(1px);
+}
+
+.browser-compatibility {
+  font-size: 0.85rem;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px dashed var(--card-border);
+}
+
+.browser-compatibility ul {
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.browser-compatibility .compatible {
+  color: #38a169;
+  font-weight: 500;
+}
+
+.browser-compatibility .may-have-issues {
+  color: #dd6b20;
+  font-weight: 500;
+}
+
+.browser-compatibility .tip {
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-style: italic;
+}

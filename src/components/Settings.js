@@ -236,6 +236,30 @@ const Settings = ({
                 </button>
               </div>
               
+              <div className="speech-to-text-test">
+                <h4>Test Speech-to-Text</h4>
+                <p>If you're having issues with the speech-to-text feature, check your browser's microphone permissions and test it here:</p>
+                <button 
+                  className="test-stt-btn"
+                  onClick={() => {
+                    // Open new tab with ElevenLabs speech-to-text direct test
+                    window.open('https://elevenlabs.io/speech-to-text', '_blank');
+                  }}
+                >
+                  Test Speech-to-Text on ElevenLabs
+                </button>
+                <div className="browser-compatibility">
+                  <p><strong>Browser Compatibility:</strong></p>
+                  <ul>
+                    <li>Chrome: <span className="compatible">✓ Fully Compatible</span></li>
+                    <li>Firefox: <span className="compatible">✓ Compatible</span></li>
+                    <li>Safari: <span className="may-have-issues">⚠️ May have issues</span></li>
+                    <li>Edge: <span className="compatible">✓ Compatible</span></li>
+                  </ul>
+                  <p className="tip">Tip: Make sure your microphone is properly connected and that you've granted browser permission to access it.</p>
+                </div>
+              </div>
+              
               {voiceApiTestResult && (
                 <div className={`api-test-result ${voiceApiTestResult.success ? 'success' : 'error'}`}>
                   <p>{voiceApiTestResult.message}</p>

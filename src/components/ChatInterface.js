@@ -319,15 +319,56 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
   // Handle microphone access and start recording
   const startRecording = async () => {
     try {
-      // Request access to the microphone
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('Requesting microphone access...');
       
-      // Create a media recorder
-      const recorder = new MediaRecorder(stream);
+      // Request access to the microphone with constraints for better quality
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 44100
+        } 
+      });
+      
+      console.log('Microphone access granted. Creating MediaRecorder...');
+      
+      // Get browser's supported MIME types
+      const supportedMimeTypes = [];
+      const mimeTypes = [
+        'audio/webm',
+        'audio/webm;codecs=opus',
+        'audio/ogg;codecs=opus',
+        'audio/mp4',
+        'audio/mp4;codecs=mp4a'
+      ];
+      
+      mimeTypes.forEach(mimeType => {
+        if (MediaRecorder.isTypeSupported(mimeType)) {
+          supportedMimeTypes.push(mimeType);
+        }
+      });
+      
+      console.log('Supported audio MIME types:', supportedMimeTypes);
+      
+      // Choose the best supported MIME type
+      const mimeType = supportedMimeTypes.length > 0 ? supportedMimeTypes[0] : '';
+      
+      // Create a media recorder with appropriate options
+      const recorder = new MediaRecorder(stream, {
+        mimeType: mimeType,
+        audioBitsPerSecond: 128000 // Higher quality audio
+      });
+      
+      console.log('MediaRecorder created with MIME type:', recorder.mimeType);
       setMediaRecorder(recorder);
+      
+      // Clear any previous chunks
+      recordedChunks.current = [];
       
       // Handle data available events
       recorder.ondataavailable = (e) => {
+        console.log('Data available, chunk size:', e.data.size);
         if (e.data.size > 0) {
           recordedChunks.current.push(e.data);
         }
@@ -335,7 +376,18 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
       
       // Handle recording stop event
       recorder.onstop = async () => {
-        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/webm' });
+        console.log('Recording stopped. Processing audio...');
+        console.log('Number of recorded chunks:', recordedChunks.current.length);
+        
+        if (recordedChunks.current.length === 0) {
+          console.error('No audio data recorded');
+          alert('No audio data was captured. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+        
+        const audioBlob = new Blob(recordedChunks.current, { type: recorder.mimeType || 'audio/webm' });
+        console.log('Audio blob created, size:', audioBlob.size, 'bytes, type:', audioBlob.type);
         recordedChunks.current = [];
         
         // Stop all tracks to release the microphone
@@ -345,29 +397,49 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
         if (elevenLabsService && isVoiceEnabled) {
           try {
             setIsLoading(true);
+            console.log('Sending audio to ElevenLabs for transcription...');
+            
+            // Check if audio blob is valid
+            if (audioBlob.size < 100) {
+              throw new Error('Audio recording too short or empty');
+            }
+            
             const transcribedText = await elevenLabsService.speechToText(audioBlob);
             
             if (transcribedText) {
+              console.log('Transcription successful:', transcribedText);
               setInputValue(transcribedText);
             } else {
               console.warn('No text transcribed from audio');
+              alert('No speech detected. Please try again or speak more clearly.');
             }
           } catch (error) {
             console.error('Speech-to-text error:', error);
             // Show error message to user
-            alert('Could not convert speech to text. Please try again or type your message.');
+            alert(`Could not convert speech to text: ${error.message}. Please try again or type your message.`);
           } finally {
             setIsLoading(false);
           }
         }
       };
       
-      // Start recording
-      recorder.start();
+      // Handle recording errors
+      recorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event.error);
+        alert(`Recording error: ${event.error.message}`);
+        setIsRecording(false);
+        setIsLoading(false);
+      };
+      
+      // Start recording with 10ms timeslice to get frequent ondataavailable events
+      recorder.start(1000); // Get data every second
+      console.log('Recording started');
       setIsRecording(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      alert('Could not access microphone. Please check your browser permissions.');
+      alert(`Could not access microphone: ${error.message}. Please check your browser permissions.`);
+      setIsRecording(false);
+      setIsLoading(false);
     }
   };
   

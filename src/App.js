@@ -521,7 +521,7 @@ const Main = () => {
 
 function App() {
   return (
-    <Router>
+    <Router basename="/">
       <Routes>
         <Route path="/admin" element={<Admin />} />
         <Route path="/supabase-check" element={<SupabaseChecker />} />

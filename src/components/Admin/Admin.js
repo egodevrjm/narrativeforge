@@ -9,6 +9,8 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  console.log('Admin component loaded');
+
   // Check if user is already authenticated on mount
   useEffect(() => {
     checkAuthStatus();
@@ -56,6 +58,9 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
+      <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f44336', color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+        ADMIN PAGE
+      </div>
       <SupabaseVerification />
       {isAuthenticated ? (
         <AdminDashboard onLogout={handleLogout} />

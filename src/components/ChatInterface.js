@@ -1,13 +1,106 @@
-import React, { useState, useEffect, useRef } from 'react';
+  // Save current chat state
+  const saveCurrentChat = () => {
+    if (!geminiService || !character || !scenario || !chatId) {
+      console.error('Cannot save chat: missing required data');
+      return null;
+    }
+    
+    try {
+      // Get chat history from Gemini service
+      const geminiHistory = geminiService.exportChatHistory();
+      
+      // Create chat snapshot
+      const chatSnapshot = StorageService.saveChatSnapshot(
+        messages,
+        character,
+        scenario, 
+        geminiHistory
+      );
+      
+      console.log('Chat automatically saved:', chatSnapshot?.id);
+      return chatSnapshot;
+    } catch (error) {
+      console.error('Error saving chat snapshot:', error);
+      return null;
+    }
+  };
+  
+  // Handle manual save request
+  const handleSaveRequest = () => {
+    const savedChat = saveCurrentChat();
+    if (savedChat && typeof onSaveChat === 'function') {
+      onSaveChat(savedChat);
+    }
+  };
+
+  // Toggle auto-save feature
+  const toggleAutoSave = () => {
+    const newState = !autoSaveEnabled;
+    setAutoSaveEnabled(newState);
+    localStorage.setItem('auto_save_chat', newState.toString());
+  };
+  
+  // Load auto-save setting
+  useEffect(() => {
+    const savedAutoSave = localStorage.getItem('auto_save_chat');
+    if (savedAutoSave !== null) {
+      setAutoSaveEnabled(savedAutoSave === 'true');
+    }
+  }, []);
+
+  // Save chat state when component unmounts if auto-save is enabled
+  useEffect(() => {
+    return () => {
+      if (autoSaveEnabled && messages.length > 1) {
+        saveCurrentChat();
+      }
+    };
+  }, [autoSaveEnabled, messages]);
+
+  // Handle exporting chat to file
+  const handleExportChat = () => {
+    if (!messages.length) return;
+    
+    // Format and save chat history as a JSON file
+    const chatData = {
+      id: chatId,
+      title: character?.name ? `${character.name} - ${scenario?.title || 'Untitled'}` : 'Chat Export',
+      character: character,
+      scenario: scenario,
+      messages: messages,
+      geminiHistory: geminiService ? geminiService.exportChatHistory() : null,
+      exported: true,
+      exportDate: new Date().toISOString()
+    };
+    
+    const chatJson = JSON.stringify(chatData, null, 2);
+    const filename = `${chatData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.json`;
+    
+    const blob = new Blob([chatJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create temp link and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    
+    // Clean up
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  };
+  import React, { useState, useEffect, useRef } from 'react';
 import './ChatInterface.css';
 import VoiceSelector from './VoiceSelector';
+import StorageService from '../services/storageService';
 
-const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, isVoiceEnabled, onSaveChat, onReset }) => {
+const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, isVoiceEnabled, onSaveChat, onReset, savedChatData = null }) => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [messageType, setMessageType] = useState('dialogue'); // dialogue, action, thought
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const [chatId, setChatId] = useState(null);
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   
   // Voice-related state
   const [selectedVoice, setSelectedVoice] = useState(null);
@@ -21,21 +114,40 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const recordedChunks = useRef([]);
 
-  // Initialize with system message
+  // Initialize with system message or load saved chat
   useEffect(() => {
-    if (character && scenario) {
-      // Clear any existing messages to prevent story contamination
+    if (savedChatData) {
+      // Load from saved chat data
+      console.log('Loading saved chat:', savedChatData.id);
+      setChatId(savedChatData.id);
+      setMessages(savedChatData.messages || []);
+      
+      // Restore Gemini service state if history is available
+      if (geminiService && savedChatData.geminiHistory) {
+        try {
+          geminiService.reset();
+          geminiService.initialize(savedChatData.character, savedChatData.scenario);
+          geminiService.importChatHistory(savedChatData.geminiHistory);
+          console.log('Restored Gemini chat history');
+        } catch (error) {
+          console.error('Error restoring Gemini chat history:', error);
+          // Fall back to normal initialization
+          geminiService.reset();
+          geminiService.initialize(character, scenario);
+        }
+      }
+    } else if (character && scenario) {
+      // New chat - clear any existing messages to prevent story contamination
       setMessages([]);
+      setChatId(Date.now().toString());
       
       // Small timeout to ensure everything is reset
       setTimeout(() => {
-        setMessages([
-          {
-            role: 'system',
-            content: `Scenario initialized: ${scenario.title || 'Untitled'}. Character: ${character.name || 'Unnamed'}. Ready to begin roleplay.`,
-            timestamp: new Date().toISOString()
-          }
-        ]);
+        setMessages([{
+          role: 'system',
+          content: `Scenario initialized: ${scenario.title || 'Untitled'}. Character: ${character.name || 'Unnamed'}. Ready to begin roleplay.`,
+          timestamp: new Date().toISOString()
+        }]);
         
         // Generate initial AI response if geminiService is available
         if (geminiService) {
@@ -46,7 +158,7 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
         }
       }, 200);
     }
-  }, [character, scenario]);
+  }, [character, scenario, savedChatData, geminiService]);
 
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -126,6 +238,11 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
       
       const newMessages = [...messages, newMessage, assistantMessage];
       setMessages(newMessages);
+      
+      // Auto-save chat after each response if enabled
+      if (autoSaveEnabled && chatId) {
+        saveCurrentChat();
+      }
       
       // Generate and play voice if enabled and autoplay is on
       if (isVoiceEnabled && elevenLabsService && selectedVoice && autoplayEnabled) {
@@ -340,10 +457,29 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
           )}
           <button 
             className="save-btn" 
-            onClick={() => typeof onSaveChat === 'function' && onSaveChat(messages)}
+            onClick={handleSaveRequest}
             type="button"
+            title="Save chat"
           >
             Save Chat
+          </button>
+          <div className="auto-save-toggle">
+            <label title="Automatically save chat progress">
+              <input
+                type="checkbox"
+                checked={autoSaveEnabled}
+                onChange={toggleAutoSave}
+              />
+              <span>Auto-save</span>
+            </label>
+          </div>
+          <button 
+            className="export-btn" 
+            onClick={handleExportChat}
+            type="button"
+            title="Export chat to file"
+          >
+            Export
           </button>
           <button 
             className="reset-btn" 

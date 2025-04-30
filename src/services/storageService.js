@@ -1,4 +1,33 @@
-/**
+const loadChat = (chatId) => {
+  const chats = loadChats();
+  return chats.find(chat => chat.id === chatId) || null;
+};
+
+const createChatSnapshot = (messages, character, scenario, geminiHistory, title = null) => {
+  const chatId = Date.now().toString();
+  const defaultTitle = character?.name ? 
+    `${character.name} - ${scenario?.title || 'Untitled'}` : 
+    `Chat - ${new Date().toLocaleString()}`;
+  
+  return {
+    id: chatId,
+    title: title || defaultTitle,
+    character: character,
+    scenario: scenario,
+    messages: messages,
+    geminiHistory: geminiHistory,
+    created: new Date().toISOString(),
+    lastModified: new Date().toISOString(),
+    previewText: messages.length > 0 ? 
+      messages[messages.length - 1].content.substring(0, 100) + '...' : 
+      'Empty chat'
+  };
+};
+
+const saveChatSnapshot = (messages, character, scenario, geminiHistory, title = null) => {
+  const chat = createChatSnapshot(messages, character, scenario, geminiHistory, title);
+  return saveChat(chat) ? chat : null;
+};/**
  * Storage Service
  * Handles saving and loading data from localStorage
  */
@@ -139,9 +168,16 @@ const deleteScenario = (scenarioId) => {
 
 // Chat operations
 const saveChat = (chat) => {
-  if (!chat || !chat.id || !chat.title) {
-    console.error('Cannot save chat without id and title');
+  if (!chat || !chat.id) {
+    console.error('Cannot save chat without id');
     return false;
+  }
+  
+  // Ensure chat has a title, generate one if missing
+  if (!chat.title) {
+    const characterName = chat.character?.name || 'Unnamed Character';
+    const scenarioTitle = chat.scenario?.title || 'Untitled Scenario';
+    chat.title = `${characterName} - ${scenarioTitle}`;
   }
   
   const existingChats = loadChats();
@@ -152,6 +188,7 @@ const saveChat = (chat) => {
   if (existingIndex >= 0) {
     // Update existing chat
     existingChats[existingIndex] = {
+      ...existingChats[existingIndex],
       ...chat,
       lastModified: new Date().toISOString()
     };
@@ -222,6 +259,9 @@ const StorageService = {
   saveChat,
   loadChats,
   deleteChat,
+  loadChat,
+  createChatSnapshot,
+  saveChatSnapshot,
   saveSettings,
   loadSettings,
   saveApiKey,

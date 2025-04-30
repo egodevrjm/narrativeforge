@@ -6,8 +6,10 @@ import ChatInterface from './components/ChatInterface.js';
 import ScenarioSelection from './components/ScenarioSelection.js';
 import Settings from './components/Settings.js';
 import ApiKeyWarning from './components/ApiKeyWarning.js';
+import SavedChats from './components/SavedScenarios/SavedChats.js';
 import GeminiService from './services/geminiService.js';
 import ElevenLabsService from './services/elevenLabsService.js'; // Import ElevenLabs service
+import StorageService from './services/storageService.js';
 import { defaultCharacter, defaultScenario } from './templates/defaultTemplate.js';
 import { preDesignedScenarios } from './templates/preDesignedScenarios.js';
 import ChatBackground from './components/ChatBackground.js';
@@ -28,6 +30,8 @@ function App() {
   const [isTestingApi, setIsTestingApi] = useState(false);
   const [apiTestResult, setApiTestResult] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSavedChats, setShowSavedChats] = useState(false);
+  const [savedChatData, setSavedChatData] = useState(null);
   
   // ElevenLabs state
   const [elevenLabsApiKey, setElevenLabsApiKey] = useState('');
@@ -209,6 +213,31 @@ function App() {
   const toggleSettings = () => {
     setShowSettings(!showSettings);
   };
+  
+  // Toggle saved chats panel
+  const toggleSavedChats = () => {
+    setShowSavedChats(!showSavedChats);
+  };
+
+  // Handle loading a saved chat
+  const handleLoadChat = (chatData) => {
+    // First reset everything to prevent contamination
+    if (geminiService) {
+      geminiService.reset();
+    }
+    
+    // Set character and scenario from saved chat
+    setCharacter(chatData.character);
+    setScenario(chatData.scenario);
+    setSavedChatData(chatData);
+    setCurrentStep('chat');
+    setShowSavedChats(false);
+  };
+
+  // Handle closing saved chats panel
+  const handleCloseSavedChats = () => {
+    setShowSavedChats(false);
+  };
 
   // Handle scenario selection
   const handleSelectScenario = (scenarioData) => {
@@ -218,6 +247,7 @@ function App() {
     }
     setCharacter(null);
     setScenario(null);
+    setSavedChatData(null);
     
     // Set new scenario data
     setTimeout(() => {
@@ -244,26 +274,11 @@ function App() {
   };
 
   // Handle saving chat
-  const handleSaveChat = (chatData) => {
-    // Save chat functionality
-    console.log('Saving chat:', chatData);
+  const handleSaveChat = (savedChat) => {
+    console.log('Saved chat:', savedChat);
     
-    // Format and save chat history as a JSON file
-    const chatJson = JSON.stringify(chatData, null, 2);
-    const chatTitle = character?.name ? `${character.name}_chat` : 'narrative_forge_chat';
-    const filename = `${chatTitle}_${new Date().toISOString().split('T')[0]}.json`;
-    
-    const blob = new Blob([chatJson], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    // Create temp link and trigger download
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    
-    // Clean up
-    setTimeout(() => URL.revokeObjectURL(url), 100);
+    // Show confirmation message or perform additional actions
+    alert('Chat saved successfully!');
   };
 
   // Reset to welcome screen
@@ -272,6 +287,7 @@ function App() {
       setCurrentStep('welcome');
       setCharacter(null);
       setScenario(null);
+      setSavedChatData(null);
     }
   };
 
@@ -301,7 +317,11 @@ function App() {
     const scenarioImages = {
       'betrayal-melody': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
       'detective-noir': 'https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=1200&q=80',
-      'space-explorer': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=80'
+      'space-explorer': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=80',
+      'lost-enchanter': 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=1200&q=80',
+      'neon-hacker': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+      'wasteland-survivor': 'https://images.unsplash.com/photo-1542652694-40abf526446e?auto=format&fit=crop&w=1200&q=80',
+      'regency-intrigue': 'https://images.unsplash.com/photo-1551651767-d5ffbdd04088?auto=format&fit=crop&w=1200&q=80'
     };
     
     // Return image URL or a default one
@@ -323,6 +343,13 @@ function App() {
               {elevenLabsService ? "🎤 Voice enabled" : "🎤 Voice settings needed"}
             </div>
           )}
+          <button 
+            className="saved-chats-btn" 
+            onClick={toggleSavedChats}
+            title="Saved chats"
+          >
+            📚 Saved Chats
+          </button>
           <button className="settings-btn" onClick={toggleSettings}>
             ⚙️ Settings
           </button>
@@ -349,6 +376,17 @@ function App() {
           voiceApiTestResult={voiceApiTestResult}
           onSaveElevenLabsApiKey={handleElevenLabsApiKeySubmit}
         />
+      )}
+      
+      {showSavedChats && (
+        <div className="modal-overlay">
+          <div className="modal-content large-modal">
+            <SavedChats 
+              onLoadChat={handleLoadChat} 
+              onClose={handleCloseSavedChats} 
+            />
+          </div>
+        </div>
       )}
 
       <main className="app-content">
@@ -413,6 +451,7 @@ function App() {
                 elevenLabsService={elevenLabsService}
                 isVoiceEnabled={isVoiceEnabled}
                 onReset={handleReset}
+                savedChatData={savedChatData}
               />
             </ChatBackground>
           </div>

@@ -8,7 +8,7 @@ const scenarioImages = {
   'betrayal-melody': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=60',
   'detective-noir': 'https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=800&q=60',
   'space-explorer': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=60',
-  'lost-enchanter': 'https://images.unsplash.com/photo-1509068524745-2d2e8334bce9?auto=format&fit=crop&w=800&q=60',
+  'lost-enchanter': 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=800&q=60',
   'neon-hacker': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=60'
 };
 

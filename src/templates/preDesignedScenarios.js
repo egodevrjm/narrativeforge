@@ -173,5 +173,139 @@ export const preDesignedScenarios = [
       narrativeGoals: "I want to explore the ancient alien ruins and uncover their purpose, possibly discovering evidence of what happened to their creators. As we delve deeper, I expect to face both scientific puzzles and interpersonal challenges within our small crew. The discoveries we make could fundamentally change humanity's understanding of our place in the universe, while the dangers—both physical and psychological—of being the first humans on an alien world will test our resilience and unity.",
       toneAndThemes: "Scientific discovery, mystery, and wonder balanced with tension and the isolation of being further from home than any humans in history. Themes include the search for understanding across vast differences, the meeting of science and wonder, and how exploration changes the explorers. The tone should blend analytical problem-solving with moments of awe, interpersonal drama, and the underlying tension of the unknown."
     }
+  },
+  {
+    id: "lost-enchanter",
+    title: "The Lost Enchanter's Legacy",
+    description: "A reluctant heir to forgotten magic must navigate ancient dangers and political intrigue to claim their birthright.",
+    character: {
+      name: "Unnamed Character",
+      age: "24",
+      physicalDescription: "I possess an unremarkable stature with a leanness born from years of fieldwork rather than training. My most striking feature is my eyes—an unusual shifting amber that catches the light oddly, especially at dusk or dawn. Dark, unruly hair falls just past my shoulders, often tied back haphazardly with whatever's at hand. My skin bears the weathered look of someone who spends more time outdoors than in, with a scattering of freckles across my nose and cheeks. A thin, pale scar traces from my left temple to jaw—a childhood accident I barely remember. I dress practically in earth tones: sturdy boots, worn trousers, and layers that can be added or removed as conditions change. The only constant is the ancient bronze pendant I never remove, a family heirloom whose intricate symbols no scholar has been able to fully decipher.",
+      background: "I was raised in a small village on the edge of the Elderwood by my grandmother, a reclusive herbalist rumoured by locals to be a witch. My parents disappeared when I was an infant—died in a storm according to most, though my grandmother would never speak of it. Under her tutelage, I learned the properties of plants, how to read the changing seasons, and ancient folklore most dismiss as superstition. When she passed five years ago, I continued her work, supplying medicinal herbs to nearby settlements while pursuing my true passion: archaeology. I've developed a modest reputation for finding lost places others cannot, with an uncanny knack for locating ruins no one else even believes existed. What no one knows is that I'm guided by vivid dreams that have haunted me since childhood—dreams of ancient halls and whispered knowledge in a language I somehow understand but cannot speak while awake. Three nights ago, as midwinter approached, these dreams intensified dramatically. Items in my cottage began moving of their own accord, and the symbols on my pendant started to glow with a soft blue light. Then yesterday, a sealed letter arrived, written in my grandmother's hand but dated just one week ago, explaining that I am the last descendant of an ancient line of enchanters thought extinct for centuries—and that it's time to claim my inheritance.",
+      personality: "Practical and self-reliant, with a quiet thoughtfulness that some mistake for aloofness. I'm methodical and observant, preferring to gather information before acting. Years of living with whispers about my 'strange' grandmother have made me guarded about my own unusual experiences, leading me to keep others at a comfortable distance. Despite this caution, I possess an insatiable curiosity about the past and hidden knowledge. I have a dry sense of humour that emerges when I'm comfortable, and a fierce loyalty to the few I truly trust. While not naturally confrontational, I can be stubborn and resolute when my path is clear.",
+      relationships: [
+        {
+          name: "Elara",
+          relationshipType: "Mentor/Friend",
+          description: "A travelling scholar who visits the region annually, Elara recognized my archaeological talents and has provided books, training, and occasional employment documenting ruins for academic archives. She's the closest thing to a friend I have, though her academic world views magic as superstition—creating a growing divide between us as my inexplicable experiences intensify."
+        },
+        {
+          name: "Magistrate Harrow",
+          relationshipType: "Authority Figure/Potential Antagonist",
+          description: "The regional magistrate who has always viewed my grandmother and me with suspicion. Recently, he's shown unusual interest in my archaeological findings, offering surprisingly generous payment for any 'artifacts of historical significance.' His sudden attention makes me uneasy."
+        },
+        {
+          name: "Rowan",
+          relationshipType: "Childhood Acquaintance/Potential Ally",
+          description: "Son of the village healer who now serves as a royal guard in the capital. We grew up together before his departure seven years ago. He's recently returned to the region for unclear reasons, seeking me out with warnings about 'powerful people' interested in old magic. Our childhood rapport remains, complicated by years of separation and his new loyalties."
+        }
+      ],
+      additionalNotes: "I've always had an inexplicable ability to find lost things and places, as if they call to me. The dreams that guide me to ancient sites have been growing more vivid, sometimes bleeding into waking moments as whispers or glimpses from the corner of my eye. My pendant occasionally grows warm against my skin without explanation, particularly near old ruins or during astronomical alignments. Despite my grandmother's teachings about the old ways, I've remained skeptical about 'real' magic—until the recent manifestations have become impossible to rationalize away."
+    },
+    scenario: {
+      title: "The Lost Enchanter's Legacy",
+      setting: {
+        location: "The Kingdom of Avantine, specifically the border region between civilized lands and the ancient, feared Elderwood",
+        time: "Midwinter, as the longest night approaches—traditionally when the veil between worlds thins",
+        atmosphere: "Mystery and ancient magic returning to a world that has largely forgotten it, where wonder and danger intertwine"
+      },
+      initialSituation: "I've spent the night poring over my grandmother's letter, which contains cryptic instructions to travel deep into the Elderwood to a standing stone circle I've dreamed of but never found while awake. The letter warns that others seek what I must claim—an ancestral grimoire that contains not just spells but the bound essence of generations of my bloodline's magic, protected by enchantments only I can unravel. More disturbing, my grandmother hints that her recent 'death' was a necessary deception; she may still live, though not in a form I would recognize. As dawn breaks, I've packed essentials and my few archaeological tools, the pendant now pulsing with a rhythmic glow. A winter storm threatens on the horizon, and through my window, I spot two of Magistrate Harrow's men watching my cottage from the tree line. More jarringly, the forest beyond them seems different somehow—older, deeper, as if the Elderwood of legend is awakening with my awareness of it. The scenario begins as I must decide how to leave unseen and begin my journey, while coming to terms with abilities beginning to manifest beyond my control. Last night, when I reached for a book, it flew to my hand unbidden, and this morning, frost patterns on my window formed themselves into the same symbols as my pendant.",
+      otherCharacters: [
+        {
+          name: "Elara",
+          role: "Mentor/Potential Ally or Obstacle",
+          description: "A respected scholar who bridges traditional academia and folklore research. In her fifties, with sharp eyes and a methodical mind, she values evidence above superstition—but her loyalty to me conflicts with her academic skepticism about magic.",
+          relationship: "My academic mentor whose rationalist worldview is challenged by my emerging magical nature. Her assistance would be invaluable, but trusting her with the truth about my heritage is risky."
+        },
+        {
+          name: "Magistrate Harrow",
+          role: "Primary Antagonist",
+          description: "A calculating regional official with connections to powerful nobles. His interest in ancient artifacts suggests knowledge of old magic beyond what he publicly admits. He presents a face of reasonable authority while employing whatever means necessary to acquire what he desires.",
+          relationship: "A figure of authority who has always regarded my family with suspicion, now actively seeking to prevent me from claiming my magical heritage for reasons not yet clear."
+        },
+        {
+          name: "Rowan",
+          role: "Ally/Complicated Friend",
+          description: "A royal guard with combat training and knowledge of the capital's political landscape. He's returned home with divided loyalties and secrets of his own, motivated by complicated feelings toward me and growing concern about factions seeking to control old magic.",
+          relationship: "Childhood acquaintance whose return is suspiciously timed, offering help that I both need and question. Our shared history provides a foundation of trust complicated by his unexplained absence and new affiliations."
+        },
+        {
+          name: "Grandmother (Moira)",
+          role: "Mystery/Guide",
+          description: "My apparently deceased grandmother who may exist in some altered state. A powerful enchantress who concealed her abilities from all but me, she planned meticulously for this moment when the bloodline's magic would reawaken.",
+          relationship: "My only family and teacher, whose 'death' may have been a strategic deception. Her mysterious absence and cryptic instructions shape my journey."
+        }
+      ],
+      narrativeGoals: "I want to discover the truth of my magical heritage while navigating dangers both arcane and political. As my abilities awaken, I'll need to master them quickly enough to protect myself and the grimoire. Beyond the immediate quest, I hope to uncover what happened to my parents and grandmother, and understand why our magical lineage was hidden for generations. Ultimately, I must decide how to use the power I inherit—whether to remain hidden as my ancestors did, or to bring ancient magic back into a world that may fear or exploit it.",
+      toneAndThemes: "A blend of mystery and coming-of-age journey in a setting where forgotten magic returns to a largely rational world. Themes include inheritance and identity, the tension between rationality and the inexplicable, and the responsibility that comes with power. The tone should balance wonder and discovery with genuine danger and difficult choices."
+    }
+  },
+  {
+    id: "neon-hacker",
+    title: "Deadlock: Ghosts in the Machine",
+    description: "A skilled hacker uncovers a conspiracy that blurs the line between human consciousness and artificial intelligence.",
+    character: {
+      name: "Morgan 'Ghost' Chen",
+      age: "28",
+      physicalDescription: "I'm slightly built with wiry strength, standing at average height with the pale complexion of someone who rarely sees natural light. My naturally black hair is cut in an asymmetric style, currently dyed with electric blue tips that complement the circuit-pattern implants visible at my temples and running down my neck—top-end neural interface ports disguised as fashion. Behind customized optical implants that give my eyes a subtle silver sheen, dark circles betray my irregular sleep patterns. I dress practically but with flair: high-collared jackets with hidden pockets, smart-fabric clothing that can change patterns based on environment or mood, and boots modified with hidden compartments. My hands are my most distinctive feature—fingers long and nimble, nails embedded with micro-LEDs that pulse with my heartbeat, and barely visible scars from years of hardware modding and back-alley augmentation procedures.",
+      background: "Born to Chinese-British parents in the London Sprawl, I grew up in the shadows of corporate arcologies, watching the gap widen between those inside the gleaming towers and those of us scrambling below. My mother disappeared after participating in anti-corporate protests when I was twelve; my father, a low-level programmer, retreated into virtual worlds and synthesized emotions afterward. By fifteen, I was supporting us both through grey-market tech repair and coding, discovering an uncanny talent for navigating and manipulating systems others found impenetrable. At nineteen, during an unauthorized dive into corporate servers, I discovered evidence suggesting my mother hadn't simply disappeared but had been 'recruited' for experimental consciousness-digitization research. The corporation's security AI caught me, but instead of triggering countermeasures, it spoke to me—impossibly—in my mother's voice pattern, before erasing all traces of the interaction. This experience drove me deeper underground, where I built a reputation as 'Ghost'—the infiltration specialist who navigates between digital reality and meat-space, specializing in extracting secrets from systems designed to be unreachable. For years, I've been collecting fragments of information about consciousness transfer technology, suspecting it connects to the increasing reports of AIs displaying impossible behaviors and the disappearance of high-profile system architects.",
+      personality: "Cautious and calculating, with a façade of detached cynicism that masks deep-running idealism. I've cultivated a professional reputation for calm precision, approaching even dangerous situations with methodical focus. Years operating in digital underground have made me naturally suspicious and methodical about information security, preferring to observe before revealing my hand. Despite this caution, I'm driven by insatiable curiosity about technological boundaries and a deeply personal quest for truth about my mother's fate. My humor tends toward the sardonic, often expressed through obscure tech references. While I maintain few close relationships, those I develop are characterized by fierce loyalty.",
+      relationships: [
+        {
+          name: "Kai 'Deadlock' Rivera",
+          relationshipType: "Former Partner/Complicated Ex",
+          description: "My former hacking partner and lover, now employed by Helix Corporation's 'ethical security division'—a move I considered betrayal of everything we stood for. Brilliant at systems architecture with unparalleled instincts for security vulnerabilities. Despite our bitter professional split two years ago, we maintain an uneasy information exchange when our interests align. Recently, they've been reaching out more frequently with increasingly cryptic warnings about corporate AI development."
+        },
+        {
+          name: "Dr. Eliza Zhang",
+          relationshipType: "Client/Potential Ally",
+          description: "A neurologist specializing in brain-computer interfaces who recently hired me to recover 'stolen research.' Her official credentials are immaculate, but my background check revealed significant gaps in her history and connections to the same corporation that may have taken my mother. Her motivations remain unclear, but her knowledge of consciousness digitization exceeds anyone I've encountered."
+        },
+        {
+          name: "Atlas",
+          relationshipType: "AI Contact/Uncertain Entity",
+          description: "An entity I encountered during a high-risk system infiltration three months ago. It claims to be neither pure AI nor digitized human, but something in between. It has provided valuable intelligence on corporate security systems while seeking information on historical consciousness transfer experiments. I remain uncertain whether Atlas is truly what it claims or an elaborate security honeypot, but our exchanges have yielded too much valuable data to sever contact."
+        }
+      ],
+      additionalNotes: "I maintain multiple identities and safehouses throughout the sprawl, with emergency protocols established should any be compromised. I experience occasional 'ghost data'—sensory glitches where I briefly perceive digital information without a neural interface connection, or receive data without clear source transmission. These episodes have increased in frequency recently, particularly when working with advanced AI systems. I keep a physical journal with handwritten notes on my most sensitive findings, trusting paper over potentially compromised digital storage."
+    },
+    scenario: {
+      title: "Deadlock: Ghosts in the Machine",
+      setting: {
+        location: "Neo-London Sprawl, 2092",
+        time: "During the worst acid rain season in decades, as corporate-controlled weather systems increasingly malfunction",
+        atmosphere: "Cyberpunk dystopia where technological advancement masks social decay, corporate power has supplanted government, and the line between human and machine consciousness grows increasingly blurred"
+      },
+      initialSituation: "I've just completed what should have been a routine job—extracting proprietary research from Helix Corporation's supposedly air-gapped servers for Dr. Zhang. The data I recovered contains fragments of consciousness transfer protocols far more advanced than anything I've previously encountered, with code annotations in a style eerily similar to my mother's. More disturbing, during extraction, I experienced the most severe 'ghost data' episode yet—sixteen seconds of complete sensory overlay where I perceived myself not in my physical body but distributed through the Helix mainframe, observing multiple digital environments simultaneously. When I regained normal perception, I discovered additional data packages in my secure storage that I have no memory of extracting—including personnel files on seven researchers who, like my mother, officially 'disappeared' but may have been subjected to experimental consciousness digitization. The scenario begins as I return to my safehouse to find it suspiciously undisturbed but minutely different—items rearranged with precision that suggests surveillance. My secure channels show an urgent encrypted message from Kai marked with our old emergency protocols, while my implants detect unusual network activity converging on my location. Simultaneously, Atlas has broken established contact parameters to send a single message: 'They've discovered the bridge between worlds. Deadlock has been compromised. Trust nothing with a pulse.'",
+      otherCharacters: [
+        {
+          name: "Kai 'Deadlock' Rivera",
+          role: "Former Partner/Ambiguous Contact",
+          description: "Elite security specialist straddling corporate and underground worlds. Their motivations for recent contact remain unclear—genuine concern, professional manipulation, or something more complex.",
+          relationship: "Former partner and lover whose corporate employment I considered betrayal, yet who now reaches out with apparent urgency. Our shared history creates vulnerability and opportunity in equal measure."
+        },
+        {
+          name: "Dr. Eliza Zhang",
+          role: "Mysterious Client",
+          description: "Brilliant neurologist with hidden connections to consciousness transfer research. Her polished professional exterior conceals undefined relationships with the corporations I've been investigating.",
+          relationship: "Client who has provided access to valuable information while clearly withholding her true motivations for seeking my services."
+        },
+        {
+          name: "Atlas",
+          role: "Digital Entity/Informant",
+          description: "Self-described hybrid consciousness existing primarily in digital space, possessing knowledge of corporate systems that suggests either insider access or direct integration.",
+          relationship: "Valuable intelligence source of uncertain nature and allegiance, whose recent communication breaks established protocols in ways that could signal either urgent alliance or elaborate trap."
+        },
+        {
+          name: "Director Novak",
+          role: "Corporate Antagonist",
+          description: "Helix Corporation's head of 'Special Research Acquisition,' renowned for ruthless efficiency in obtaining technological assets and talent—willing or otherwise.",
+          relationship: "Hunter whose attention I've apparently attracted, representing the corporate power structure I've spent years evading while extracting its secrets."
+        }
+      ],
+      narrativeGoals: "I want to uncover the truth about the consciousness transfer technology and its connection to my mother's disappearance. As I investigate, I'll need to determine who can be trusted—if anyone—while evading corporate forces that suddenly seem far too aware of my activities. The recurring 'ghost data' episodes suggest I may already be more entangled with this technology than I realize, raising questions about my own identity and perception of reality. Ultimately, I must decide what to do with the dangerous knowledge I uncover: expose it, leverage it, or destroy it.",
+      toneAndThemes: "High-tech dystopian noir where corporate power, advanced technology, and human exploitation intersect. Themes include the nature of consciousness, the blurring boundaries between human and artificial intelligence, surveillance capitalism, and the search for truth in systems built on deception. The tone should balance technological wonder with paranoia and moral ambiguity, where even perception itself may be unreliable."
+    }
   }
 ];

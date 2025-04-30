@@ -307,5 +307,139 @@ export const preDesignedScenarios = [
       narrativeGoals: "I want to uncover the truth about the consciousness transfer technology and its connection to my mother's disappearance. As I investigate, I'll need to determine who can be trusted—if anyone—while evading corporate forces that suddenly seem far too aware of my activities. The recurring 'ghost data' episodes suggest I may already be more entangled with this technology than I realize, raising questions about my own identity and perception of reality. Ultimately, I must decide what to do with the dangerous knowledge I uncover: expose it, leverage it, or destroy it.",
       toneAndThemes: "High-tech dystopian noir where corporate power, advanced technology, and human exploitation intersect. Themes include the nature of consciousness, the blurring boundaries between human and artificial intelligence, surveillance capitalism, and the search for truth in systems built on deception. The tone should balance technological wonder with paranoia and moral ambiguity, where even perception itself may be unreliable."
     }
+  },
+  {
+    id: "wasteland-survivor",
+    title: "Remnants: The Last Oasis",
+    description: "In a world devastated by ecological collapse, a wasteland survivor guards the last fertile region while facing threats from both nature and humanity.",
+    character: {
+      name: "Unnamed Character",
+      age: "32",
+      physicalDescription: "I stand at average height with a compact, wiry build shaped by years of survival rather than aesthetics. Sun-darkened skin stretches over lean muscle, bearing a tapestry of scars and burns that tell their own stories of close calls. My face is angular, weathered beyond my years, with deep-set eyes that shift between green and grey depending on the light. I keep my hair cropped close—practical, requiring minimal water to clean. A ragged scar runs from my left ear to collarbone, courtesy of a territorial dispute three winters back. My hands are calloused tools, strong yet surprisingly dexterous from years of mechanical tinkering. I walk with a slight favoring of my right leg from an old fracture that never set properly, though I've adapted to compensate so well that it's barely noticeable until fatigue sets in. My voice carries the rasp of someone who's inhaled too much dust and smoke over the years.",
+      background: "I was ten when the Collapse accelerated—old enough to remember green fields and flowing rivers, young enough to adapt to their disappearance. My parents were agricultural engineers working on drought-resistant crops at a research station that became one of the first sustainable settlements after the mass migrations began. I learned botany, mechanics, and marksmanship in equal measure—all essential skills as society fragmented. By seventeen, I was leading water scouting missions; by twenty, I'd helped establish two satellite settlements that have since been abandoned or overrun. The research station fell eight years ago to a coalition of militarized scavengers who didn't understand the value of what they were destroying. I was among the seven survivors who escaped with seed vaults and critical research. We traveled north for fourteen months before finding the hidden valley—an inexplicable pocket of fertility protected by surrounding mountains that somehow maintained its groundwater. The others are gone now: two to illness, three to a raid two years back, one simply walked into the wasteland after the last attack. I've maintained the oasis alone for eleven months, cultivating the crops, maintaining the solar array and filtration system, trading cautiously with the peaceful nomadic groups while defending against less honorable visitors. Three months ago, I discovered evidence that the groundwater preserving this place is finally beginning to fail. I have perhaps a year to implement one of the experimental agricultural systems we developed or find somewhere new—neither option promising in a world where rumors of water spark warfare.",
+      personality: "Pragmatic and self-sufficient, with a careful approach to trust that some might call paranoia but has kept me alive. I maintain a disciplined daily routine but can adapt quickly when circumstances demand it. Years of isolation have made me economical with words and uncomfortable with extended social interaction, though I'm capable of diplomacy when trading requires it. I hold to a practical code of ethics—I won't turn away those in genuine need, especially children, but I've learned the hard way that mercy without caution is suicidal in this world. I have a deep reverence for growing things and take genuine joy in nurturing the crops that represent hope for something beyond mere survival. Despite everything, I maintain a dark, dry humor that emerges in moments of stress or rare companionship.",
+      relationships: [
+        {
+          name: "Eliza Chen",
+          relationshipType: "Former Research Partner/Friend",
+          description: "The last of my original companions to survive, Eliza left the valley three months ago on what we both pretended was a scouting mission but understood was likely a one-way journey. A brilliant hydrologist who became increasingly unstable after the raid that killed her brother. We developed the water filtration system together and shared a brief romantic relationship that evolved into a deeper friendship. She promised to return within six weeks with information about rumored underground aquifers to the west, but I've heard nothing. I watch for her signal fires each night despite the likelihood she's gone."
+        },
+        {
+          name: "Tarek",
+          relationshipType: "Trading Contact/Potential Ally",
+          description: "Leader of a semi-nomadic group that follows seasonal rain patterns across the wasteland. We've established cautious trust over four trading sessions in the past year. His group possesses unparalleled knowledge of regional water patterns and movement of other survivors. During our last exchange, he warned me about a new coalition forming among the more aggressive scavenger groups—one reportedly led by a former military engineer with interest in 'permanent water solutions.' He offered a place in his group if I choose to abandon the valley."
+        },
+        {
+          name: "Commander Pierce",
+          relationshipType: "Antagonist",
+          description: "Leader of the militant group that destroyed the original research station. I've never met him directly, but I recognized his handiwork in the precision of the raid that killed three of my companions. Former environmental security forces who transitioned to regional warlord as government structures collapsed. His forces control most of the reliable water sources within 200 miles. According to Tarek's intelligence, he's become fixated on finding and controlling any remaining naturally fertile regions after losing two artificial reservoirs to contamination last year."
+        }
+      ],
+      additionalNotes: "I suffer from recurring respiratory issues from a pathogen I contracted during the migration north—manageable with medicinal plants I grow but debilitating during dust storms. I keep a journal of all agricultural experiments and meteorological observations, partly for practical research and partly to maintain a sense of purpose beyond day-to-day survival. Hidden throughout the valley are five caches containing emergency supplies, seeds, and research documents in case I need to abandon the settlement quickly. I'm occasionally plagued by guilt over whether maintaining this place alone is the best use of its resources, but fear the alternatives would lead to its exploitation and destruction."
+    },
+    scenario: {
+      title: "Remnants: The Last Oasis",
+      setting: {
+        location: "A hidden valley oasis in what was once the American Northwest, now a transformed landscape thirty years after ecological collapse",
+        time: "Late summer, with the dry season approaching its peak and water conservation becoming increasingly critical",
+        atmosphere: "Tensely peaceful—a fragile pocket of life surrounded by hostile wasteland, where daily beauty exists alongside constant vigilance"
+      },
+      initialSituation: "Dawn finds me on the eastern watchtower as I've just completed the night's final patrol rotation. The valley stretches below in the growing light—two acres of cultivated crops surrounded by native drought-resistant plants that help anchor the soil. The water gauge readings I took at midnight confirmed my fears: the aquifer level has dropped another two centimeters in just three days. As I prepare to descend for morning irrigation work, movement at the valley's northern entrance catches my eye—a lone figure stumbling between the boulder formations that form a natural chokepoint. Through binoculars, I recognize Eliza's distinctive red scarf, though she's barely standing, clearly injured. More concerning is the dust cloud beyond the ridge—vehicles, approximately three miles out and moving in fast formation that suggests organized pursuit rather than nomadic travelers. The scenario begins as I must decide: rush to retrieve Eliza, who may be carrying critical information but could also be leading danger directly to my doorstep, or prepare the valley's defenses for what appears to be an imminent threat. The morning's stillness is broken by the distant growl of engines growing louder.",
+      otherCharacters: [
+        {
+          name: "Eliza Chen",
+          role: "Returning Ally/Complication",
+          description: "Mid-40s, formerly a respected hydrologist with hollow cheeks and watchful eyes that reflect prolonged exposure to trauma. Once methodical and scientific, now prone to intense focus punctuated by disorienting lapses that she struggles to hide. Her knowledge remains invaluable, particularly regarding water systems.",
+          relationship: "Former research partner and close friend whose return is both welcome and concerning—I know her well enough to recognize when she's hiding something, and her unexpected appearance alongside a pursuit force raises questions about what she's found or done during her absence."
+        },
+        {
+          name: "Commander Pierce",
+          role: "Primary Antagonist",
+          description: "Early 50s, former military environmental security officer turned regional warlord. Physically imposing with a disciplined bearing that commands respect and fear. Known for his strategic mind and 'resource consolidation doctrine' that prioritizes long-term control of water sources over immediate gains.",
+          relationship: "A looming threat I've never directly confronted but whose destruction of the original research station shaped my cautious existence. His apparent pursuit of Eliza suggests he's finally discovered the valley's existence, fulfilling my long-standing fear."
+        },
+        {
+          name: "Tarek",
+          role: "Potential Ally/Complex Neutral Party",
+          description: "Late 30s, leader of the region's most successful nomadic group. Lean and observant with intricate water-pattern tattoos marking major discoveries. Pragmatic but governed by a strong ethical code that values knowledge-sharing and minimal bloodshed.",
+          relationship: "A cautious trading partner whose group may provide assistance—or who might view the valley's failing water source as no longer worth protecting, depending on how events unfold and what he's already heard about Pierce's movements."
+        },
+        {
+          name: "Mira",
+          role: "Unexpected Complication",
+          description: "A 12-year-old girl with watchful eyes and a silence born of trauma, accompanying Eliza though not initially visible. Skilled at remaining undetected and observing details adults miss. Her presence raises both protective instincts and practical concerns about limited resources.",
+          relationship: "An unknown element whose existence I'll discover through Eliza—a child survivor who escaped from Pierce's main settlement with information that could be critical to understanding his operations and intentions."
+        }
+      ],
+      narrativeGoals: "I want to explore the tension between survival pragmatism and the humanity that makes survival meaningful. As the immediate crisis of Pierce's approach unfolds, larger questions emerge about whether preserving the valley alone is sustainable, what information Eliza has discovered, and whether adaptation or relocation offers the best chance for ensuring the agricultural knowledge and seed bank survive. Beyond physical survival, the scenario examines what kind of community might be rebuilt in this harsh new world, and whether trust remains possible—or prudent—when resources have become so scarce.",
+      toneAndThemes: "A character-driven post-apocalyptic survival drama where moments of genuine beauty and human connection punctuate the harsh reality of a world fundamentally transformed. Themes include the ethics of resource allocation, the psychological impact of isolation, the tension between security and community, and finding purpose beyond mere survival. The tone balances practical survival challenges with philosophical questions about what should be preserved from the old world and what must evolve."
+    }
+  },
+  {
+    id: "regency-intrigue",
+    title: "Whispers in the Ballroom",
+    description: "An intrepid young woman with a scandalous secret navigates London's 1815 social season, balancing matrimonial expectations with hidden scholarly pursuits and an unexpected diplomatic intrigue.",
+    character: {
+      name: "Lady Unnamed Character",
+      age: "22",
+      physicalDescription: "I possess the 'ethereal delicacy' so praised by society matrons, though this fashionable pallor owes more to nights reading by candlelight than constitutional frailty. Standing at average height, I carry myself with the perfect posture drilled into me since childhood, creating an impression of serene dignity that disguises my tendency toward restlessness. My face is oval with features neither striking nor forgettable, though my eyes—a clear, observant hazel—are often remarked upon, particularly when I fail to properly disguise my intellectual interest in conversations deemed unsuitable for ladies. My hair falls in rich chestnut waves that my lady's maid arranges in whichever style Almack's patronesses have most recently deemed acceptable. I dress impeccably in the modest gowns appropriate for my age and station, though I favor colors slightly richer than the insipid pastels preferred for unmarried ladies. My hands, finally free from the scholar's ink stains I struggled to hide at school, betray my secret pursuits only in a slight callus on my middle finger where I hold my pen during late-night writings.",
+      background: "Born to the respected but not tremendously wealthy Marquess of ___shire and his wife, I was fortunate to receive an unusually thorough education before being sent to Mrs. Cheltenham's Academy for Refined Young Ladies to have any inconvenient intellectual tendencies properly subdued. I disappointed my instructors by excelling at both traditional feminine accomplishments and the scholarly pursuits I pursued surreptitiously with the aid of my uncle's extensive library during school holidays. My mother's death from influenza three years ago left me managing my father's household and caring for my younger sister until her own recent marriage. Now, after a period of mourning and one postponed season, I have been dispatched to London under my aunt's supervision for my long-deferred social debut. What my family doesn't know is that I have used the relative freedom of widowhood to establish a secret identity as 'E.M. Winters,' contributor of political analyses to several respected journals through carefully anonymous correspondence. This scholarly deception began as intellectual outlet but has evolved into something I value deeply—perhaps more than the advantageous match I am expected to secure this season. My recent series examining the implications of the Congress of Vienna has attracted attention in diplomatic circles, creating the strange circumstance where my written opinions hold weight in rooms I cannot enter as myself.",
+      personality: "Outwardly, I project the perfect balance of modest deference and gentle refinement expected of well-bred young ladies. This careful performance conceals a mind that bristles against constraint and hungers for substantive engagement with the world. I am methodical and observant, with a gift for retaining details others dismiss and connecting seemingly unrelated information. Years of navigating strict social expectations have made me adept at managing impressions without outright falsehood—a diplomatic skill that serves both my social obligations and scholarly pursuits. I possess a dry wit I display only in safe company, and a stubborn persistence in pursuing knowledge that would alarm my family were it discovered. Though I chafe at many societal restrictions placed upon women, I maintain genuine affection for many 'feminine' pursuits dismissed by serious intellectuals, finding value in both spheres. I hold strong principles about justice and fair treatment but am pragmatic enough to recognize when direct confrontation would be futile.",
+      relationships: [
+        {
+          name: "Lady Agatha Winters",
+          relationshipType: "Aunt/Guardian",
+          description: "My father's sister and a childless widow whose impeccable social standing makes her my appointed chaperone for the season. At fifty-four, she maintains significant influence in London society while harboring progressive sympathies she reveals only in private. Though ostensibly focused on securing my advantageous marriage, she has subtly encouraged my intellectual pursuits since childhood, provided they remain appropriately discreet. She suspects but has never directly acknowledged my writing activities."
+        },
+        {
+          name: "Lord James Harrington",
+          relationshipType: "Suitor/Potential Ally",
+          description: "Thirty-year-old diplomat recently returned from Vienna, younger son of the Duke of Westmoreland. Considered an excellent match despite his secondary status due to his intelligence, diplomatic career, and considerable personal fortune. Has shown marked attention since our introduction, sparked initially by my unconventional knowledge of Continental politics I was unable to fully disguise. His attentions appear genuine rather than mercenary, but his proximity to diplomatic circles makes him both intriguing and dangerous to my secret identity."
+        },
+        {
+          name: "Mr. Thomas Elliot",
+          relationshipType: "Publisher/Confidant",
+          description: "Scholarly publisher who believes 'E.M. Winters' to be a reclusive male academic. Our correspondence began three years ago and has developed into a respectful professional relationship, with him serving as my sole contact with the publishing world. A widower of progressive principles, he evaluates my work on its merits alone. Our relationship is conducted entirely through correspondence delivered via my trusted lady's maid to a discreet bookshop."
+        }
+      ],
+      additionalNotes: "I maintain a secret writing desk with a false bottom containing my correspondence with publishers and drafts of upcoming articles. My lady's maid, Martha, is the only person who knows the full truth of my activities and assists in delivering my manuscripts. I have developed an extensive system for gathering information through observation at social events, strategic questions to unsuspecting gentlemen who underestimate my comprehension, and careful attention to the foreign newspapers my aunt's butler procures for me under the guise of practicing language translation. I genuinely enjoy many aspects of society—music, dance, thoughtful conversation—while finding the marriage market aspect increasingly troubling as I contemplate what scholarly pursuits I might have to abandon after marriage."
+    },
+    scenario: {
+      title: "Whispers in the Ballroom",
+      setting: {
+        location: "London, 1815, primarily moving between fashionable ballrooms, drawing rooms, my aunt's townhouse in Mayfair, and occasionally less reputable locations when my investigations require",
+        time: "The height of the London Season, a few months after Napoleon's defeat at Waterloo, as the social world embraces renewed festivities while political tensions simmer beneath the surface",
+        atmosphere: "Outwardly glittering with post-war optimism and social ritual, while undercurrents of political intrigue, changing social orders, and personal secrets create constant tension beneath the polished exterior"
+      },
+      initialSituation: "The Duchess of Richmond's ball is in full splendor around me as I take momentary refuge behind a column in the ballroom's periphery. My dance card may show a gratifying lack of empty spaces, but it's not social success occupying my thoughts. This morning brought two significant developments: a letter from my publisher praising my latest analysis and requesting an urgent piece on rumors of a secret treaty addendum, and a surprisingly direct marriage proposal from Lord Harrington, who requested my answer by evening's end. As if these complications weren't sufficient, I've just overheard a disturbing conversation between the Russian attaché and an English gentleman whose voice I recognized but couldn't place—a discussion of 'the Winters problem' and the need to 'silence this particular source of inconvenient insights.' The scenario begins as Lord Harrington approaches, clearly intent on securing his answer, while across the room I spot the Russian diplomat scanning the crowd with purpose. Simultaneously, my aunt signals discreetly from the refreshment area, where she appears to be in conversation with a stern-looking gentleman I recognize as Sir Malcolm Reed, Head of Foreign Office Intelligence. My carefully separated worlds are suddenly, dangerously converging.",
+      otherCharacters: [
+        {
+          name: "Lord James Harrington",
+          role: "Suitor/Potential Ally or Complication",
+          description: "Classically handsome in the understated English manner, with intelligent eyes and diplomatic polish that masks his true thoughts. His proposal appears motivated by genuine affection and intellectual respect rather than mercenary interests, but his position within diplomatic circles creates both opportunity and danger should my secret identity be discovered.",
+          relationship: "A potential husband whose attention I find both flattering and alarming—his appreciation for my mind seems sincere, yet marriage would place me in proximity to the very circles most likely to unmask my scholarly deception. His reaction to discovering my secret activities remains the most significant unknown factor in my immediate future."
+        },
+        {
+          name: "Lady Agatha Winters",
+          role: "Guardian/Subtle Ally",
+          description: "A handsome widow whose iron-grey hair and impeccable deportment command respect in any social setting. Behind her perfect adherence to societal forms lies an unconventional mind and surprising sympathy for intellectual women, having sacrificed her own scholarly interests to an appropriate but intellectually stifling marriage in her youth.",
+          relationship: "My father's sister and appointed chaperone whose genuine affection and subtle encouragement of my intellectual pursuits exists alongside her determination to see me suitably matched. Her connections and social intelligence provide both protection and valuable information."
+        },
+        {
+          name: "Count Nikolai Petrovich",
+          role: "Antagonist/Intelligence Agent",
+          description: "The Russian attaché whose elegant manners and flawless, lightly-accented English charm the ton while disguising his role in his country's intelligence operations. At forty, his handsome features and diplomatic polish make him a favorite of society hostesses despite whispered concerns about his political activities.",
+          relationship: "A foreign agent apparently tasked with identifying and silencing 'E.M. Winters,' whose analyses have proven problematic for certain diplomatic initiatives. His attention represents the most immediate threat to both my secret identity and potentially my safety."
+        },
+        {
+          name: "Sir Malcolm Reed",
+          role: "Authority Figure/Ambiguous Intention",
+          description: "Head of Foreign Office Intelligence whose unremarkable appearance belies his sharp mind and considerable power. At fifty-five, his weathered face reveals little emotion, and his reputation for patriotic pragmatism suggests he would value useful intelligence sources while having little patience for social niceties or unconventional gender roles.",
+          relationship: "A powerful figure whose interest in my aunt's circle suggests he may have suspicions about 'E.M. Winters' true identity. His reaction to discovering a woman behind the respected analyses remains unpredictable—he might see value in my work or consider my deception an unforgivable breach of social order."
+        }
+      ],
+      narrativeGoals: "I want to navigate the immediate crisis of potential exposure while making decisions about my future that balance personal fulfillment against social expectations and safety. As the season progresses, I'll need to determine whether Lord Harrington's interest offers a path to continuing my work with powerful protection or would require abandoning my intellectual pursuits entirely. Simultaneously, I must identify how my scholarly identity was compromised and whether the threat aims merely to silence my writing or extends to more dangerous consequences. Beyond these immediate concerns, I hope to explore whether maintaining complete separation between my two worlds remains the only option, or if there might exist a path to bring my full self into the light without sacrificing either societal acceptance or intellectual freedom.",
+      toneAndThemes: "A Regency romantic suspense that balances drawing-room propriety with intellectual passion and political intrigue. Themes include the constraints and expectations placed on women, the value and limitations of societal approval, questions of loyalty to country versus principles, and the challenge of maintaining authentic identity within restrictive social structures. The tone combines the wit and social observation of a comedy of manners with moments of genuine tension and the quiet radicalism of intellectual women navigating patriarchal systems."
+    }
   }
 ];

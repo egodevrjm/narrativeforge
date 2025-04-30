@@ -9,7 +9,9 @@ const scenarioImages = {
   'detective-noir': 'https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=800&q=60',
   'space-explorer': 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=60',
   'lost-enchanter': 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=800&q=60',
-  'neon-hacker': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=60'
+  'neon-hacker': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=60',
+  'wasteland-survivor': 'https://images.unsplash.com/photo-1542652694-40abf526446e?auto=format&fit=crop&w=800&q=60',
+  'regency-intrigue': 'https://images.unsplash.com/photo-1551651767-d5ffbdd04088?auto=format&fit=crop&w=800&q=60'
 };
 
 const ScenarioSelection = ({ onSelectScenario, onCreateOwn, isApiKeySet }) => {
@@ -129,6 +131,10 @@ function getScenarioTags(scenario) {
     tags.push('Fantasy', 'Magic', 'Mystery');
   } else if (scenario.id === 'neon-hacker') {
     tags.push('Cyberpunk', 'Dystopia', 'Tech');
+  } else if (scenario.id === 'wasteland-survivor') {
+    tags.push('Post-Apocalyptic', 'Survival', 'Drama');
+  } else if (scenario.id === 'regency-intrigue') {
+    tags.push('Historical', 'Romance', 'Intrigue');
   }
   
   return tags;
@@ -147,6 +153,10 @@ function getScenarioTag(id) {
       return 'Fantasy';
     case 'neon-hacker':
       return 'Cyberpunk';
+    case 'wasteland-survivor':
+      return 'Post-Apocalyptic';
+    case 'regency-intrigue':
+      return 'Historical';
     default:
       return 'Adventure';
   }

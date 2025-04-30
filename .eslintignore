@@ -1,0 +1,12 @@
+# Ignore build outputs
+build/
+dist/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore service worker
+src/serviceWorker.js
+
+# Ignore any files in public
+public/

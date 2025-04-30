@@ -7,6 +7,32 @@ import supabase from './supabaseClient';
  */
 const SupabaseService = {
   /**
+   * Health Check Functions
+   */
+  
+  // Simple health check
+  healthCheck: async () => {
+    try {
+      // First try the RPC function if it exists
+      const { data: healthData, error: healthError } = await supabase.rpc('get_supabase_health').catch(() => {
+        return { data: null, error: new Error('Health check RPC not available') };
+      });
+      
+      if (healthError) {
+        // Try a simple table check instead
+        const { data, error } = await supabase.from('scenarios').select('id').limit(1);
+        if (error) throw error;
+        return { status: 'ok', method: 'table_check' };
+      }
+      
+      return healthData;
+    } catch (error) {
+      console.error('Health check error:', error);
+      throw error;
+    }
+  },
+  
+  /**
    * Auth Functions
    */
   
@@ -58,30 +84,40 @@ const SupabaseService = {
   
   // Get all default scenarios
   getDefaultScenarios: async () => {
-    const { data, error } = await supabase
-      .from('scenarios')
-      .select(`
-        *,
-        characters:characters(*)
-      `)
-      .eq('is_default', true);
-      
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('scenarios')
+        .select(`
+          *,
+          characters:characters(*)
+        `)
+        .eq('is_default', true);
+        
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error getting default scenarios:', error);
+      return [];
+    }
   },
   
   // Get all scenarios (admin only)
   getAllScenarios: async () => {
-    const { data, error } = await supabase
-      .from('scenarios')
-      .select(`
-        *,
-        characters:characters(*)
-      `)
-      .order('created_at', { ascending: false });
-      
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('scenarios')
+        .select(`
+          *,
+          characters:characters(*)
+        `)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error getting all scenarios:', error);
+      return [];
+    }
   },
   
   // Get a scenario by ID

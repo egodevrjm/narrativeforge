@@ -1,5 +1,5 @@
 import React from 'react';
-import SupabaseVerification from './SupabaseVerification';
+import SimpleSupabaseCheck from './SimpleSupabaseCheck';
 import './AdminStyles.css';
 
 const SupabaseChecker = () => {
@@ -8,7 +8,7 @@ const SupabaseChecker = () => {
       <div className="admin-verification-page">
         <h1>NarrativeForge Supabase Connection Test</h1>
         <div className="admin-verification-card">
-          <SupabaseVerification />
+          <SimpleSupabaseCheck />
         </div>
         
         <div className="admin-verification-help">

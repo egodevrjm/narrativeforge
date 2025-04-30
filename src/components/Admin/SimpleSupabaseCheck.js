@@ -1,27 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../services/supabase/supabaseClient';
+import SupabaseService from '../../services/supabase/supabaseService';
 
-const SupabaseVerification = () => {
+const SimpleSupabaseCheck = () => {
   const [status, setStatus] = useState('checking');
   const [error, setError] = useState(null);
+  const [debugInfo, setDebugInfo] = useState({
+    url: false,
+    key: false,
+    healthCheck: false
+  });
 
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        // Check if environment variables are defined
+        // First just check if the environment variables are present
         const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
         const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+        
+        setDebugInfo(prev => ({
+          ...prev,
+          url: !!supabaseUrl,
+          key: !!supabaseKey
+        }));
         
         if (!supabaseUrl || !supabaseKey) {
           throw new Error('Supabase environment variables are missing');
         }
         
-        // Try a simple Supabase query that doesn't use aggregate functions
-        const { data, error } = await supabase.from('scenarios').select('id').limit(1);
-        
-        if (error) throw error;
-        
-        setStatus('connected');
+        // Try the simplest possible query - just a health check
+        try {
+          const healthData = await SupabaseService.healthCheck();
+          console.log('Health check successful:', healthData);
+          setDebugInfo(prev => ({ ...prev, healthCheck: true }));
+          setStatus('connected');
+        } catch (healthErr) {
+          console.error('Health check failed:', healthErr);
+          throw healthErr;
+        }
       } catch (err) {
         console.error('Supabase connection error:', err);
         setStatus('error');
@@ -34,7 +50,7 @@ const SupabaseVerification = () => {
 
   return (
     <div className="supabase-verification">
-      <h2>Supabase Connection Status</h2>
+      <h2>Basic Supabase Connection Test</h2>
       
       {status === 'checking' && (
         <div className="status-checking">
@@ -55,8 +71,9 @@ const SupabaseVerification = () => {
           <p>Error: {error}</p>
           <div className="debug-info">
             <h3>Debug Information:</h3>
-            <p>SUPABASE_URL defined: {process.env.REACT_APP_SUPABASE_URL ? 'Yes' : 'No'}</p>
-            <p>SUPABASE_ANON_KEY defined: {process.env.REACT_APP_SUPABASE_ANON_KEY ? 'Yes' : 'No'}</p>
+            <p>SUPABASE_URL defined: {debugInfo.url ? 'Yes' : 'No'}</p>
+            <p>SUPABASE_ANON_KEY defined: {debugInfo.key ? 'Yes' : 'No'}</p>
+            <p>Health Check: {debugInfo.healthCheck ? 'Passed' : 'Failed'}</p>
           </div>
         </div>
       )}
@@ -64,4 +81,4 @@ const SupabaseVerification = () => {
   );
 };
 
-export default SupabaseVerification;
+export default SimpleSupabaseCheck;

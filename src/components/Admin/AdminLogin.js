@@ -14,7 +14,15 @@ const AdminLogin = ({ onLogin }) => {
     setError(null);
 
     try {
+      // First check if the connection to Supabase is working
+      await SupabaseService.healthCheck().catch(err => {
+        throw new Error(`Supabase connection failed: ${err.message}`);
+      });
+      
+      // Then try to sign in
       await SupabaseService.signIn(email, password);
+      
+      // Check if the user is an admin
       const isAdmin = await SupabaseService.isAdmin();
       
       if (isAdmin) {
@@ -25,7 +33,7 @@ const AdminLogin = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('Invalid login credentials. Please try again.');
+      setError(error.message || 'Invalid login credentials. Please try again.');
     } finally {
       setLoading(false);
     }

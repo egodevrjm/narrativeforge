@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate, useNavigate } from 'react-router-dom';
 import QuickSetup from './components/SetupMode/QuickSetup.js';
 import './components/SetupMode/QuickSetup.css';
 import SetupWizard from './components/SetupWizard/SetupWizard.js';
@@ -13,6 +14,7 @@ import StorageService from './services/storageService.js';
 import { defaultCharacter, defaultScenario } from './templates/defaultTemplate.js';
 import { preDesignedScenarios } from './templates/preDesignedScenarios.js';
 import ChatBackground from './components/ChatBackground.js';
+import Admin from './components/Admin/Admin.js';
 import './layout.css';
 import './theme.css';
 import './App.css';
@@ -20,7 +22,8 @@ import './improved-message-formatting.css';
 import './social-media-style.css';
 import './chat-auto-detect.css';
 
-function App() {
+const Main = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState('welcome'); // welcome, character, scenario, chat, quickSetup
   const [character, setCharacter] = useState(null);
   const [scenario, setScenario] = useState(null);
@@ -39,6 +42,10 @@ function App() {
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isTestingVoiceApi, setIsTestingVoiceApi] = useState(false);
   const [voiceApiTestResult, setVoiceApiTestResult] = useState(null);
+
+  const handleAdminNavigation = () => {
+    navigate('/admin');
+  };
 
   // Initialize Gemini service when API key is set
   useEffect(() => {
@@ -468,6 +475,12 @@ function App() {
             <div className="footer-links">
               <a href="#" className="footer-link">Privacy</a>
               <a href="#" className="footer-link">Terms</a>
+              <button 
+                className="admin-link" 
+                onClick={handleAdminNavigation}
+              >
+                Admin
+              </button>
               <button className="settings-btn-footer" onClick={toggleSettings}>
                 ⚙️ Settings
               </button>
@@ -502,6 +515,17 @@ function App() {
         )}
       </footer>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/*" element={<Main />} />
+      </Routes>
+    </Router>
   );
 }
 

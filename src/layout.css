@@ -132,6 +132,7 @@
   color: var(--accent-secondary);
 }
 
+.admin-link,
 .settings-btn-footer {
   background-color: transparent;
   border: none;
@@ -145,6 +146,7 @@
   font-size: 0.9rem;
 }
 
+.admin-link:hover,
 .settings-btn-footer:hover {
   color: var(--accent-secondary);
 }

@@ -321,7 +321,8 @@ function App() {
       'lost-enchanter': 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=1200&q=80',
       'neon-hacker': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
       'wasteland-survivor': 'https://images.unsplash.com/photo-1542652694-40abf526446e?auto=format&fit=crop&w=1200&q=80',
-      'regency-intrigue': 'https://images.unsplash.com/photo-1551651767-d5ffbdd04088?auto=format&fit=crop&w=1200&q=80'
+      'regency-intrigue': 'https://images.unsplash.com/photo-1551651767-d5ffbdd04088?auto=format&fit=crop&w=1200&q=80',
+      'whispers-ballroom': 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=1200&q=80'
     };
     
     // Return image URL or a default one

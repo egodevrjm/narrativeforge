@@ -202,38 +202,80 @@ class ElevenLabsService {
       console.log('Audio blob type:', audioBlob.type);
       console.log('Audio blob size:', audioBlob.size);
       
+      // Convert format if needed - ElevenLabs often works better with MP3/WAV
+      let processedBlob = audioBlob;
+      let fileName = 'recorded_audio.webm';
+      
+      // If the blob is very small, it might be empty or corrupted
+      if (audioBlob.size < 1000) {
+        console.error('Audio recording is too small, likely empty or corrupted');
+        throw new Error('Audio recording is too short or empty. Please speak clearly and try again.');
+      }
+      
       // Create FormData
       const formData = new FormData();
       
-      // Convert to MP3 or another format if needed (WebM should work but let's be safe)
-      formData.append('audio', audioBlob, 'recorded_audio.webm');
+      // Append the audio file with appropriate name based on type
+      if (audioBlob.type.includes('mp3')) {
+        fileName = 'recorded_audio.mp3';
+      } else if (audioBlob.type.includes('wav')) {
+        fileName = 'recorded_audio.wav';
+      }
+      formData.append('audio', processedBlob, fileName);
       
-      // Optional parameters for better recognition
-      formData.append('model_id', 'whisper-1'); // Use Whisper model
+      // Add model parameter - specify Whisper for better results
+      formData.append('model_id', 'whisper-1');
+      
+      // Add language parameter if you know the speaker's language
+      formData.append('language', 'en'); // English (change as needed)
       
       console.log('Sending request to ElevenLabs speech-to-text API...');
+      console.log('Request URL: https://api.elevenlabs.io/v1/speech-to-text');
       
-      // Make API request with more detailed logging
-      const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
-        method: 'POST',
-        headers: {
-          'xi-api-key': this.apiKey,
-          'Accept': 'application/json'
-        },
-        body: formData
-      });
+      // Make API request with more detailed logging and longer timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      try {
+        const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
+          method: 'POST',
+          headers: {
+            'xi-api-key': this.apiKey,
+            'Accept': 'application/json'
+          },
+          body: formData,
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId); // Clear the timeout if the request completes
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', JSON.stringify([...response.headers.entries()]));
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('ElevenLabs API error response:', errorText);
+          throw new Error(`API error: ${response.status} - ${errorText}`);
+        }
 
-      console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('ElevenLabs API error response:', errorText);
-        throw new Error(`API error: ${response.status} - ${errorText}`);
+        const data = await response.json();
+        console.log('Speech-to-text response received:', data);
+        
+        if (data && data.text) {
+          return data.text || '';
+        } else {
+          console.error('No text in API response:', data);
+          throw new Error('No text was detected in your speech. Please try again.');
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId); // Clear the timeout to prevent memory leaks
+        
+        if (fetchError.name === 'AbortError') {
+          console.error('Request timed out after 30 seconds');
+          throw new Error('The request to convert speech to text timed out. Please try again.');
+        }
+        throw fetchError;
       }
-
-      const data = await response.json();
-      console.log('Speech-to-text response:', data);
-      return data.text || '';
     } catch (error) {
       console.error('Error converting speech to text:', error);
       throw error;

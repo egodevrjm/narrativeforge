@@ -321,26 +321,38 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
     try {
       console.log('Requesting microphone access...');
       
-      // Request access to the microphone with constraints for better quality
+      // Ensure any previous recording has been cleared
+      recordedChunks.current = [];
+      
+      // First check if the browser supports MediaRecorder
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        throw new Error('Your browser does not support audio recording. Please try Chrome or Edge.');
+      }
+      
+      // Request access to the microphone with optimized constraints for speech
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
+          channelCount: 1, // Mono for better speech recognition
           sampleRate: 44100
         } 
       });
       
       console.log('Microphone access granted. Creating MediaRecorder...');
       
-      // Get browser's supported MIME types
+      // Get browser's supported MIME types for optimal compatibility
       const supportedMimeTypes = [];
       const mimeTypes = [
-        'audio/webm',
         'audio/webm;codecs=opus',
+        'audio/webm',
         'audio/ogg;codecs=opus',
         'audio/mp4',
-        'audio/mp4;codecs=mp4a'
+        'audio/mp4;codecs=mp4a',
+        'audio/wav',
+        'audio/x-wav',
+        'audio/mpeg'
       ];
       
       mimeTypes.forEach(mimeType => {
@@ -351,7 +363,7 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
       
       console.log('Supported audio MIME types:', supportedMimeTypes);
       
-      // Choose the best supported MIME type
+      // Choose the best supported MIME type, preferring Opus codecs for compatibility
       const mimeType = supportedMimeTypes.length > 0 ? supportedMimeTypes[0] : '';
       
       // Create a media recorder with appropriate options
@@ -363,13 +375,10 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
       console.log('MediaRecorder created with MIME type:', recorder.mimeType);
       setMediaRecorder(recorder);
       
-      // Clear any previous chunks
-      recordedChunks.current = [];
-      
       // Handle data available events
       recorder.ondataavailable = (e) => {
         console.log('Data available, chunk size:', e.data.size);
-        if (e.data.size > 0) {
+        if (e.data && e.data.size > 0) {
           recordedChunks.current.push(e.data);
         }
       };
@@ -381,17 +390,24 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
         
         if (recordedChunks.current.length === 0) {
           console.error('No audio data recorded');
-          alert('No audio data was captured. Please try again.');
+          alert('No audio data was captured. Please try again and speak clearly.');
+          setIsRecording(false);
           setIsLoading(false);
           return;
         }
         
+        // Create audio blob from the recorded chunks
         const audioBlob = new Blob(recordedChunks.current, { type: recorder.mimeType || 'audio/webm' });
         console.log('Audio blob created, size:', audioBlob.size, 'bytes, type:', audioBlob.type);
-        recordedChunks.current = [];
         
         // Stop all tracks to release the microphone
         stream.getTracks().forEach(track => track.stop());
+        
+        // Create an audio element for testing (will help debug)
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audioElement = new Audio(audioUrl);
+        console.log('Audio test URL created:', audioUrl);
+        console.log('Audio duration (estimated):', audioElement.duration || 'unknown');
         
         // Convert speech to text if ElevenLabs is enabled
         if (elevenLabsService && isVoiceEnabled) {
@@ -403,6 +419,9 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
             if (audioBlob.size < 100) {
               throw new Error('Audio recording too short or empty');
             }
+
+            // Add a short delay to ensure the blob is fully formed
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             const transcribedText = await elevenLabsService.speechToText(audioBlob);
             
@@ -415,11 +434,18 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
             }
           } catch (error) {
             console.error('Speech-to-text error:', error);
-            // Show error message to user
-            alert(`Could not convert speech to text: ${error.message}. Please try again or type your message.`);
+            // Show error message to user with specific feedback
+            alert(`Speech-to-text error: ${error.message}. Please try again or type your message.`);
           } finally {
             setIsLoading(false);
+            setIsRecording(false);
           }
+        } else {
+          // Handle case where service isn't available
+          console.error('ElevenLabs service not available or voice not enabled');
+          alert('Speech-to-text service is not available. Please check your settings.');
+          setIsLoading(false);
+          setIsRecording(false);
         }
       };
       
@@ -431,12 +457,22 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
         setIsLoading(false);
       };
       
-      // Start recording with 10ms timeslice to get frequent ondataavailable events
-      recorder.start(1000); // Get data every second
+      // Start recording with timeslice to get chunks frequently
+      // Using smaller timeslice of 500ms for more responsive chunk collection
+      recorder.start(500);
       console.log('Recording started');
       setIsRecording(true);
+      
+      // Set a maximum recording time of 30 seconds
+      setTimeout(() => {
+        if (recorder && recorder.state === 'recording') {
+          console.log('Maximum recording time reached, stopping recorder');
+          recorder.stop();
+        }
+      }, 30000);
+      
     } catch (error) {
-      console.error('Error accessing microphone:', error);
+      console.error('Error starting recording:', error);
       alert(`Could not access microphone: ${error.message}. Please check your browser permissions.`);
       setIsRecording(false);
       setIsLoading(false);
@@ -446,7 +482,20 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
   // Stop recording
   const stopRecording = () => {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
-      mediaRecorder.stop();
+      console.log('Manually stopping recording...');
+      try {
+        mediaRecorder.stop();
+        // Add a brief delay before changing state to ensure events are processed
+        setTimeout(() => {
+          setIsRecording(false);
+        }, 200);
+      } catch (error) {
+        console.error('Error stopping MediaRecorder:', error);
+        setIsRecording(false);
+        alert('Error stopping recording. Please refresh the page and try again.');
+      }
+    } else {
+      console.warn('Stop recording called but recorder is not active');
       setIsRecording(false);
     }
   };

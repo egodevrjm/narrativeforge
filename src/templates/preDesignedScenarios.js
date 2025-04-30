@@ -376,7 +376,7 @@ export const preDesignedScenarios = [
     }
   },
   {
-    id: "regency-intrigue",
+    id: "whispers-ballroom",
     title: "Whispers in the Ballroom",
     description: "An intrepid young woman with a scandalous secret navigates London's 1815 social season, balancing matrimonial expectations with hidden scholarly pursuits and an unexpected diplomatic intrigue.",
     character: {

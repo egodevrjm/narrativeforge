@@ -368,7 +368,7 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
       
       // Create a media recorder with appropriate options
       const recorder = new MediaRecorder(stream, {
-        mimeType: mimeType,
+        mimeType: mimeType || 'audio/webm',  // Use standard WebM format if no specific mime type is found
         audioBitsPerSecond: 128000 // Higher quality audio
       });
       
@@ -397,7 +397,9 @@ const ChatInterface = ({ character, scenario, geminiService, elevenLabsService, 
         }
         
         // Create audio blob from the recorded chunks
-        const audioBlob = new Blob(recordedChunks.current, { type: recorder.mimeType || 'audio/webm' });
+        const audioBlob = new Blob(recordedChunks.current, { 
+          type: recorder.mimeType || 'audio/webm;codecs=opus' 
+        });
         console.log('Audio blob created, size:', audioBlob.size, 'bytes, type:', audioBlob.type);
         
         // Stop all tracks to release the microphone
